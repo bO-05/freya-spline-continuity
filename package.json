@@ -1,0 +1,32 @@
+{
+  "dependencies": {
+    "@types/node": "^20.11.30",
+    "next": "^14.1.4",
+    "nextra": "^2.13.4",
+    "nextra-theme-docs": "^2.13.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^5.4.3"
+  },
+  "name": "The-with-lumentis",
+  "description": "This video explores the concept of splines, a fundamental tool for creating smooth paths in various fields such as game development, computer graphics, and industrial design. It delves into different types of splines, their properties, and the mathematical concepts behind them, with a focus on continuity and its impact on the smoothness of the resulting curves.",
+  "version": "0.0.1",
+  "scripts": {
+    "devstart": "next dev -p 5656 & node start.js",
+    "dev": "next dev -p 5656",
+    "build": "next build",
+    "start": "next start"
+  },
+  "keywords": [
+    "Computer graphics",
+    "Animation",
+    "Bézier curves",
+    "Splines",
+    "Continuity",
+    "Interpolation",
+    "Game development",
+    "Industrial design",
+    "Vector graphics",
+    "Mathematical modeling"
+  ]
+}

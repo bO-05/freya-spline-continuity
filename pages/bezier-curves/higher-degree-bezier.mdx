@@ -1,0 +1,59 @@
+import { Callout, Steps, Step } from "nextra-theme-docs";
+
+# Higher-degree Bézier Curves
+
+While [quadratic](/bezier-curves/quadratic-cubic-bezier) and [cubic](/bezier-curves/quadratic-cubic-bezier) Bézier curves are the most commonly used, it is possible to create Bézier curves of higher degrees by adding more control points. The process of creating these curves follows the same principle of recursive linear interpolation, also known as **De Casteljau's algorithm**.
+
+<Steps>
+
+### Step 1: Define control points
+
+To create a higher-degree Bézier curve, start by defining the desired number of control points. For an $n$-degree Bézier curve, you will need $n+1$ control points.
+
+### Step 2: Apply De Casteljau's algorithm
+
+Recursively apply linear interpolation between the control points until a single point remains. This point will lie on the curve for the given $t$ value.
+
+</Steps>
+
+```mermaid
+graph LR
+  subgraph Lerp 3
+    L3P1(P1) --- L3P2(P2)
+    L3P2 --- L3P3(P3)
+    L3P3 --- L3P4(P4)
+    L3P4 --- L3P5(P5)
+  end
+  subgraph Lerp 2
+    L2P1(P1) --- L2P2(P2)
+    L2P2 --- L2P3(P3)
+    L2P3 --- L2P4(P4)
+  end
+  subgraph Lerp 1
+    L1P1(P1) --- L1P2(P2)
+    L1P2 --- L1P3(P3)
+  end
+  subgraph Curve Point
+    CP(P)
+  end
+  L3P1 --> L2P1
+  L3P2 --> L2P2
+  L3P3 --> L2P3
+  L3P4 --> L2P4
+  L2P1 --> L1P1
+  L2P2 --> L1P2
+  L2P3 --> L1P3
+  L1P1 --> CP
+  L1P2 --> CP
+```
+
+The diagram above illustrates the process of creating a higher-degree Bézier curve (in this case, a quartic Bézier curve) using De Casteljau's algorithm.
+
+<Callout type="warning">
+  Higher-degree Bézier curves offer more flexibility in shaping the curve but come with some drawbacks:
+  
+  - They lack local control, as moving any single control point affects the entire curve.
+  - Evaluating the curve becomes computationally expensive as the degree increases.
+</Callout>
+
+Due to these limitations, higher-degree Bézier curves are rarely used in practice. Instead, designers and developers often opt for [Bézier splines](/bezier-splines), which combine multiple lower-degree Bézier curves to create complex, smooth shapes while maintaining local control and computational efficiency.

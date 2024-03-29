@@ -1,0 +1,51 @@
+import { Callout, Steps, Step } from "nextra-theme-docs";
+
+# Continuity and Local Control
+
+When working with splines, there is often a trade-off between achieving higher levels of continuity and maintaining local control over the shape of the curve. Let's explore this balance and its implications for spline design.
+
+## The Pursuit of Smoothness
+
+As we learned in the previous sections on [parametric continuity](/continuity/parametric-continuity) and [geometric continuity](/continuity/geometric-continuity), higher levels of continuity lead to smoother curves. However, this smoothness comes at a cost.
+
+<Callout type="info">
+Reminder: Parametric continuity (C¹, C², C³) ensures the continuity of the curve and its derivatives, while geometric continuity (G¹, G², G³) focuses on the visual smoothness of the curve, regardless of parameterization.
+</Callout>
+
+## The Cost of Continuity
+
+When we enforce higher levels of continuity, such as C² or C³, on a spline, we start to lose local control over the shape of the curve. This is because the constraints required to achieve these levels of continuity propagate along the entire spline.
+
+For example, let's consider a cubic Bézier spline with C² continuity:
+
+<Steps>
+
+### Step 1
+
+To ensure C² continuity at a join point, the positions and velocities of the adjacent curve segments must match, and their accelerations must be equal.
+
+### Step 2
+
+These constraints determine the positions of the control points near the join, reducing the degrees of freedom for shaping the curve locally.
+
+### Step 3
+
+As we apply these constraints at each join point, the entire spline becomes highly interconnected, and moving a single control point can cause the entire spline to change shape drastically.
+
+</Steps>
+
+This loss of local control can make it challenging to create precise shapes and fine-tune the spline to our desired form.
+
+## Balancing Continuity and Control
+
+To maintain a good balance between smoothness and local control, it's often best to use the lowest level of continuity that meets our requirements. For many applications, G¹ or C¹ continuity is sufficient to create visually smooth curves while preserving a reasonable degree of local control.
+
+<Callout type="warning">
+Be cautious when enforcing high levels of continuity, as it can lead to unexpected behavior and difficulty in shaping the spline.
+</Callout>
+
+In some cases, it may be preferable to use spline types that inherently provide higher levels of continuity without sacrificing local control, such as [B-splines](/other-spline-types/b-spline). These splines offer a good compromise between smoothness and flexibility.
+
+## Conclusion
+
+Understanding the trade-offs between continuity and local control is crucial when working with splines. By carefully considering the requirements of your application and choosing the appropriate level of continuity, you can create smooth, well-behaved curves that are easy to control and manipulate.

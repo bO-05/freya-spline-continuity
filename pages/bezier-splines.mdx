@@ -1,0 +1,33 @@
+import { Callout, Steps, Step } from "nextra-theme-docs";
+
+# Bézier Splines
+
+Bézier splines are a powerful tool for creating smooth, complex curves by joining multiple Bézier curves together. They address the limitations of [higher-degree Bézier curves](/bezier-curves/higher-degree-bezier), such as lack of local control and computational inefficiency.
+
+By connecting multiple cubic Bézier curves end-to-end, Bézier splines allow for the creation of intricate shapes while maintaining local control over the curve's shape. This means that adjusting a control point only affects a specific portion of the spline, rather than the entire curve.
+
+<Callout type="info">
+Bézier splines are widely used in various applications, including vector graphics, font design, and animation, due to their flexibility and ease of use.
+</Callout>
+
+## Key Concepts
+
+- **Curve Segments**: Bézier splines consist of multiple cubic Bézier curves joined together, with each curve segment defined by its own set of control points.
+- **Knots**: The points where two curve segments meet are called knots or joins. These knots ensure continuity between the segments.
+- [**Spline Parameterization**](/bezier-splines/spline-parameterization): The process of mapping the input parameter (usually denoted as $u$) to the appropriate curve segment and local parameter value ($t$) within that segment.
+- [**Spline Anatomy**](/bezier-splines/spline-anatomy): Understanding the components of a Bézier spline, such as control points, curve segments, and knots, is crucial for effective manipulation and analysis.
+- [**Local Control and Flexibility**](/bezier-splines/local-control-flexibility): Bézier splines provide local control over the curve's shape, allowing for precise adjustments without affecting the entire spline.
+
+## Advantages of Bézier Splines
+
+1. **Smoothness**: Bézier splines create smooth, continuous curves by ensuring that adjacent curve segments share endpoints and tangents at the knots.
+2. **Local Control**: Adjusting a control point only affects a specific portion of the spline, making it easier to fine-tune the curve's shape.
+3. **Flexibility**: Bézier splines can represent a wide range of shapes by combining multiple curve segments, making them suitable for various applications.
+4. **Computational Efficiency**: By using cubic Bézier curves as the building blocks, Bézier splines maintain a relatively low computational cost compared to higher-degree Bézier curves.
+
+To dive deeper into the world of Bézier splines, explore the following subsections:
+- [Spline Parameterization](/bezier-splines/spline-parameterization)
+- [Spline Anatomy](/bezier-splines/spline-anatomy)
+- [Local Control and Flexibility](/bezier-splines/local-control-flexibility)
+
+By mastering the concepts and techniques associated with Bézier splines, you'll be well-equipped to create smooth, complex curves in your projects.

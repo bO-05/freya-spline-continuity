@@ -1,0 +1,2584 @@
+For the past year, I’ve been asking myself
+
+How do you define a smooth path?
+
+It’s an innocent question that 
+seems straightforward at first
+
+After all, we’ve used paths throughout history  
+
+both in the real world and in 
+my field of game development
+
+But it turns out, this goes much 
+deeper than one might expect.
+
+What do we mean by path?
+
+And for that matter, what do we mean by smooth?
+
+I was propelled into a year long journey
+
+filled with twists and turns
+
+unexpected realizations and discoveries
+
+making connections to things 
+I hadn’t thought of before
+
+I was knee-deep in research and math papers.
+
+I wrote pages and pages of notes, eventually I  
+
+got to the point of finding errors in 
+numerous resources online, and then,
+
+I got burnt out
+
+But, I have finally reached 
+the destination of my journey
+
+and this is where yours will begin.
+
+I’m so happy to finally share with you
+
+the culmination of that year long deep 
+dive, into the continuity of splines
+
+In the virtual worlds we create, 
+there’s often a need to define paths.
+
+These can take many different forms, such 
+as this conveyor belt in satisfactory,
+
+or this more complex type of path 
+that you see in this rollercoaster,
+
+using a path for not only 
+position, but for rotation as well
+
+We also use paths in 2D games, to animate 
+things like this in a smooth manner
+
+In fact, almost all animations in 
+games have a type of path defined  
+
+for every single joint in a character’s body
+
+Your browser has paths defined for 
+every letter in every word you read
+
+Even in art tools, we sometimes use 
+something called a gradient map. This too,  
+
+is a type of path, where the input is luminosity 
+instead of time, and the output is in color space
+
+Now, these might seem pretty unrelated
+
+These are wildly different concepts 
+from all over the digital world,  
+
+but there is something they all have in common
+
+All of them, are splines
+
+And this journey starts, with Bézier curves
+
+The most basic way to create 
+a path between two points,  
+
+is to simply draw a straight line between them
+
+We can then blend between these two 
+points, to find any point in between
+
+The input to this function, is a percentage, 
+or, a t-value, a value from 0 to 1
+
+that determines how far we want to 
+go from the first point to the second
+
+This is the most common type of blending 
+function, known as lerp, or, linear interpolation.
+
+Mathematically, we can define lerp as 
+a function that takes a single value,  
+
+our t-value from 0 to 1,
+
+and uses that to blend between the two points
+
+where 0 gives you the first point 
+and 1 gives you the endpoint.
+
+But, usually, when we create a path,  
+
+we want to be able to create smooth 
+curves, not just straight lines
+
+So what if we add another point?
+
+Instead of just two points, we now 
+have three, and between them, two lines
+
+We can then use the exact same lerp function, 
+to blend between these points on each line.
+
+But what if we then connect these two points?
+
+We now have a third line, 
+between the interpolated points,  
+
+and let’s try using lerp on that line as well
+
+Now watch what happens to this 
+point, as we change t from 0 to 1
+
+This, is the magic of Bézier curves. 
+Using only linear interpolation,  
+
+we end up with a smooth curve.
+
+This one in particular, is 
+a quadratic Bézier curve
+
+Of course, we don’t have to stop here
+
+We can add another point, lerp on those lines,
+
+connect those points, lerp on those lines
+
+connect those two points, and 
+finally, lerp on the last line
+
+And again, this will trace out 
+this beautifully smooth path
+
+This one has one more point, and is of one degree 
+higher, meaning this is the cubic bézier curve.
+
+The cubic Bézier is by far, the most common curve
+
+Almost every font and vector graphics 
+tool, is using the cubic bézier
+
+And so it’s worth digging deeper into how it works
+
+So let’s write all this down!
+
+We have 4 points, P₀ through P₃
+
+We then get these intermediate points, before 
+the final point that we get out of the function
+
+This method of, recursively lerping between 
+our points, is called DeCasteljau’s algorithm
+
+It’s very popular, and incredibly easy to remember
+
+you just lerp until you run out of things to lerp!
+
+It’s also very numerically stable, but it can 
+sometimes be a little expensive to calculate
+
+Let’s look at the same math, 
+but from a different perspective
+
+If we write all these lerps out as a math 
+function, we can shuffle things around,  
+
+and express them as a factor of each point!
+
+This is called the Bernstein 
+form of Bézier curves.
+
+A geometric interpretation of this, is 
+taking the vectors that represent each point,  
+
+scaling each of them by their own cubic 
+polynomial, and adding them all up.
+
+These polynomials might seem like they 
+came out of nowhere, but this is just  
+
+what you get when rearranging the lerp math 
+to be expressed as a factor of each point
+
+These polynomials act as 
+influences of each control point
+
+So in the beginning, the first point has all 
+influence, this is then slowly shifted over,  
+
+until the last point has all the influence
+
+This is a special type of weighted 
+sum, called a convex combination,  
+
+as these polynomials add 
+up to 1 for all values of t
+
+A third interpretation I’d like to 
+show, is particularly interesting,  
+
+because it allows us to write more optimized code
+
+Instead of writing them as factors of points, what 
+if we rearrange them as factors of powers of t?
+
+As you can see, we have a constant 
+factor, t, t squared, t cubed
+
+The reason this is computationally efficient,  
+
+is that we can cache these coefficients, 
+for each arrangement of the control points.
+
+Now, a geometric interpretation of this one is,  
+
+a little harder to wrap your head around. 
+It’s, definitely not as intuitive as the others
+
+But we can think of it as 4 vectors that 
+are each scaled by specific powers of t.  
+
+We have a constant P₀, plus a vector scaled by t,  
+
+plus a vector scaled by t squared, 
+plus a vector scaled by t cubed
+
+And so, even though all three of these 
+are describing the exact same curve  
+
+mathematically, they have different geometric 
+interpretations and performance characteristics
+
+There’s one last way we can rearrange this math, 
+that is by far, my favorite - the matrix form
+
+One thing I particularly like about it, is 
+that it separates out all the magic numbers,  
+
+it lets us see patterns and symmetries 
+that were otherwise hard to spot
+
+This is called the characteristic 
+matrix, of the cubic bézier curve
+
+Now, this matrix form actually encapsulates both 
+the bernstein and the polynomial interpretation
+
+If we multiply the powers of t 
+by the characteristic matrix,  
+
+we get the bernstein polynomials
+
+If we instead multiply the characteristic matrix  
+
+by the point matrix, we get 
+the polynomial coefficients
+
+But, a cubic bézier curve doesn’t get us very far.  
+
+What if we want to create a 
+longer, more complicated path?
+
+Luckily, béziers generalize 
+to any number of points
+
+For this set of control points, we are doing 
+the exact same thing as before. Lerp until  
+
+there are no more things to lerp, and we’re 
+left with one point, tracing out the path
+
+Not that, anyone would call it this, but, 
+technically this would be a dodecic bézier curve
+
+Just like the cubic bézier, we can 
+describe the influence of each point,  
+
+with its bernstein basis polynomials
+
+As you can see, the same principle applies,  
+
+it starts out with the first 
+point having full influence,  
+
+and then it will ride the waves through the 
+middle, until the last point gets full influence.
+
+But, if we want to use this for paths 
+in games, we now have a problem.
+
+Let’s say we want to use this path to 
+define a road, from one town to another.
+
+If we focus on a single control point - you 
+can see, its influence is, actually across  
+
+the entire curve. Which in practice means that if 
+we move this point around, the entire curve will  
+
+actually change shape. And this is a huge problem 
+if we want to create precise and intricate shapes,  
+
+snaking around mountain ranges, or whatever 
+else might be in the way of our road.
+
+In other words, we have no local control. Every 
+movement of every point affects the entire curve
+
+In addition, it doesn’t actually 
+pass through most points,  
+
+making it very difficult to make a 
+specific paths of the shape you want.
+
+And finally, given the sheer 
+number of control points,  
+
+it’ll either be numerically unstable 
+or very expensive to calculate.
+
+Clearly, higher degree bézier 
+curves are not the answer
+
+we need to dive deeper, to find a better way
+
+A way to control shapes without affecting 
+every single other point in the curve
+
+And perhaps, we left our cubic 
+bézier curve a little too early
+
+Maybe, they were just, feeling a little lonely
+
+Perhaps they just needed some friends 
+to realize their full potential,  
+
+to work as a team and achieve 
+what they couldn’t do on their own
+
+And together, they form the bézier spline
+
+Instead of having just one segment,  
+
+we now have multiple bézier curves 
+joined together, sharing endpoints
+
+Traversing this path requires 
+some extra work though
+
+The input t-value was traditionally from 0 to 1, 
+acting as a kind of percentage along the curve
+
+But in this case, our parameter 
+range has to extend across all curves
+
+If you look at the full input range, we can 
+easily map each curve to each whole number
+
+So let’s define a u-value, the 
+input parameter for the whole spline
+
+The integer part can then 
+represent the curve index
+
+and the fractional part, the local 
+t-value for each individual curve
+
+And so now, we’ve defined 
+a simple method to create,  
+
+shape, and move along a set of cubic bézier curves
+
+This is now getting a little more complex,  
+
+so let’s make sure we’re on the same page 
+about what all of these elements are called
+
+The input u-value, is in a one-dimensional 
+space called parameter space
+
+The points we define, are called control points
+
+A spline then generates individual 
+curves based on those control points,  
+
+where each curve is effectively 
+using its own math function
+
+These curves meet end to end 
+at points called joins or knots
+
+Note that in this case, the joins 
+happen to also lie on control points
+
+but this is not always the case
+
+Each curve is then assigned an 
+interval in the input parameter space,
+
+that helps us associate any 
+given input u value to a curve
+
+The values here are called knot values
+
+and the distance between them, knot intervals
+
+In this video, we’ll be 
+focusing on uniform splines,
+
+where all of our knot intervals have the 
+same length, in this case a length of 1,
+
+making it very easy to map each 
+curve to the unit interval of 0 to 1
+
+Non-uniform splines, where 
+the knot interval varies,  
+
+are significantly more complicated, 
+so let’s save that for a future video
+
+Now, we wanted to use this to create 
+a road from one town to another
+
+but, we struggled to get it 
+to work with a single curve,  
+
+because we didn’t have local 
+control, among other things
+
+So, has our spline fixed these problems?
+
+Well, if we map the basis 
+functions into our parameter space,
+
+we can analyze the weights, to 
+see if we now have local control
+
+If you look at the influence 
+of this control point,  
+
+it lies entirely within 
+the span of the third curve
+
+What this means, is that if 
+we move this control point,
+
+only that span will be affected, leaving 
+the rest of the spline completely unchanged
+
+If we look at this point, you can see 
+that its influence is twice as large,
+
+which makes sense as two curves share this point,  
+
+but it still doesn’t span further 
+than those two curve segments,
+
+and so we still have local control, again 
+leaving the rest of the spline unchanged
+
+So with the cubic bézier spline, 
+we’ve regained local control!
+
+Not only that - but because 
+we’re using cubic béziers,
+
+it doesn’t actually get any more 
+expensive by adding more points
+
+We’re effectively just sampling one cubic bézier,  
+
+even though the path is 
+much longer and more complex
+
+So compared to the higher-degree 
+bézier curve, it’s cheap!
+
+Finally - if we look back at our 
+original set of control points,  
+
+we don’t just pass through 
+the start and the end anymore
+
+We now pass through every third point,  
+
+which means its significantly easier 
+to create whatever shape you want
+
+In other words, it’s now 
+interpolating every third point
+
+It’s, really no wonder why the cubic 
+bézier spline has become so loved
+
+It really gives you a huge amount of control
+
+You can make, pretty accurate circles 
+with it (though not actual circles)
+
+You can be a little cheeky 
+and place the middle two  
+
+points exactly thirdway to make linear segments
+
+It’s the spline used when doing vector graphics,  
+
+especially in font rendering, 
+or Photoshop’s pen tool
+
+The key to the undeniable flexibility of 
+the bézier spline, lies in the arrangement  
+
+of the two control points next to the curve 
+joins, sometimes called the tangent points
+
+They have three common configurations, 
+all with different properties
+
+One is the split tangents, that you can use to 
+make sharp corners, also known as broken tangents
+
+The second one is where you align the 
+three points around the curve join
+
+This ensures the two curves are 
+tangent with each other at that join
+
+Finally, you can also mirror the 
+tangent points around the join,
+
+making them not only aligned, but also the 
+same distance from their shared control point
+
+With all these tools in mind, we can now easily 
+create paths, and animate objects on it, right?
+
+Although, something seems wrong. Look at how they 
+move across the curve joins, especially this one.
+
+It seems to suddenly change velocity.
+
+And so this, is where we need to talk 
+about a concept, called Continuity
+
+Continuity is a measure of 
+how “connected” the curves are
+
+As you can see, these curves are connected!
+
+The curves meet at the joins, 
+and so we can give this a name
+
+This spline is C⁰ continuous
+
+If we separate these curves, 
+it’s no longer continuous at all,  
+
+and so it’s no longer C⁰ continuous either
+
+So what continuity means is that 
+position changes continuously,  
+
+there’s no sudden jump, or 
+discontinuity, in this path
+
+But, we noticed something was wrong with 
+the way our cubes were moving across joins
+
+They appeared to make little “jumps” in speed
+
+And any time you want to analyze change, 
+it’s worth looking into derivatives
+
+Remember the matrix form of the cubic bézier?
+
+One very nice feature of this form, is that 
+calculating the derivative is trivially easy
+
+All we need to do is to differentiate the 
+powers-of-t matrix, using the power rule
+
+Now, this might seem a little abstract, what 
+is the derivative of a curve in 2D space?
+
+Well, a more common name for the first derivative 
+of position with respect to time, is, velocity!
+
+The second derivative is called acceleration
+
+The third derivative is 
+called the lesser known, jolt
+
+Now that we know how to calculate the 
+velocity, let’s see how it behaves in this path
+
+Did you notice how it “jumps” at every join?
+
+The length changes, in other words
+
+There’s a discontinuity in speed
+
+We can make this even more explicit 
+by drawing the graph of the velocity
+
+Notice what happens at every join
+
+The  
+
+velocity graph is discontinuous!
+
+It’s disconnected at every join
+
+So even though we aligned our tangents, 
+there’s a sudden change in speed
+
+Now watch what happens to the 
+velocity graph if we make these  
+
+tangent points mirrored, instead of just aligned
+
+The velocity around the curve is now continuous!
+
+There’s no sudden jump anywhere anymore
+
+This curve is now, C¹ continuous, 
+because both its position,  
+
+and it’s first derivative, velocity, is continuous
+
+Now, for continuity to be valid, all previous 
+derivatives have to be continuous too
+
+Every C¹ continuous path is also C⁰ continuous
+
+If we disconnect these curves in position, 
+it’s neither C⁰ or C¹ continuous anymore,
+
+even though the velocity is 
+still continuous in and of itself
+
+The discontinuity in position prevents it from 
+being classified under any continuity class
+
+But why does mirroring the tangent 
+points make it C¹ continuous?
+
+This is where looking at the algebra is helpful
+
+First, let’s label our points.
+
+Now, C⁰ continuity is trivial
+
+these two curves share the 
+point P₃ so that’s already done.
+
+C¹ continuity seems to happen when 
+the tangent points are mirrored
+
+Notice how when we move them, the 
+velocity becomes discontinuous
+
+So, to write this algebraically, this 
+is the condition that has to be met
+
+The velocity at the end of curve A, where 
+the input t-value is 1, has to be equal to
+
+the velocity at the start of curve 
+B, where the input t-value is 0
+
+You can plug in the equation here for 
+the bézier curve, and solve for P₄
+
+I’ll spare you all the algebra, 
+but, this is what you end up with
+
+which is what we would expect!
+
+P₄ is now equal to P₂ reflected around P₃
+
+In other words, it’s mirrored
+
+Now, I’ve made P₄ grayed out, 
+as we’ve actually lost a little  
+
+bit of control now if we want 
+this join to have C¹ continuity
+
+because P₄ is now fully determined by P₂ and P₃
+
+but, it’s a little sacrifice we’re willing to make
+
+Notice how the velocity stays 
+continuous no matter where we move P₂
+
+One would hope that C¹ continuity could 
+fix all of our issues with animation
+
+we’ve clearly improved it by 
+removing that velocity discontinuity
+
+but there’s still a more subtle thing going on
+
+Let’s take a closer look
+
+Can you see how the boxes suddenly and harshly 
+starts turning in the other direction here?
+
+The only way for something to change 
+direction, is through acceleration
+
+so let’s investigate how it 
+changes across this spline
+
+We can already see that we 
+have another discontinuity
+
+it makes a huge jump at the join
+
+As you can see in the graph, it’s discontinuous
+
+So, again, let’s write our acceleration 
+continuity constraint explicitly
+
+For C² continuity, the acceleration 
+at the end of curve A, has to equal  
+
+the acceleration at the start of curve B
+
+Skipping all the intermediate 
+steps, this is what we end up with!
+
+Geometrically, we can interpret this as, P₅ 
+should be placed at the vector from P₂ to P₃
+
+originating from P₁
+
+multiplied by 4
+
+P₅ is now fully constrained by P₁ P₂ and P₃
+
+If you’re familiar with constraints, 
+you might have already spotted a problem
+
+But, this works!
+
+If we change the shape of the 
+first curve, the position,  
+
+velocity and acceleration are all continuous, so 
+we successfully joined béziers with C² continuity
+
+or, did we?
+
+Something very bad is about to happen
+
+Here’s what’s up:
+
+We’ve been talking about ensuring 
+continuity around the join at P₃
+
+But in order for us to make 
+the entire spline C² continuous
+
+we need to also apply these continuity 
+constraints around the other joins
+
+P5 will now determine the position of P₇ 
+because again, mirrored tangents for C¹
+
+The same applies to P₁₀
+
+For C² continuity, P₄ P₅ and P₆ 
+now control the position of P₈
+
+And P₈ P₉ and P₇ controls the position of P₁₁
+
+We… don’t seem to have a 
+lot left to control, do we?
+
+Now watch what happens if we move a 
+single point, even just a tiny bit
+
+As you can see, it yeets off to fucking wherever, 
+making it absolutely useless as a spline
+
+But!! it’s very very smooth!
+
+Look at how smooth this movement is!
+
+At least personally, as someone who has 
+been staring at these things for a year
+
+there’s something mesmerizing about C² continuity
+
+Let’s also look at the acceleration
+
+Now this actually has grave 
+implications for cubic béziers
+
+You can’t make a cubic bézier C² continuous,  
+
+it is, literally impossible, 
+without losing local control
+
+And, having that control is the whole 
+point of using splines in the first place!
+
+Our beloved cubic bézier has betrayed us :(
+
+it was so useful for creating shapes,  
+
+but now we’ve discovered this 
+huge flaw in its construction
+
+But, because we’re all curious 
+cats, we have to ask ourselves,  
+
+what happens if we go to C³ continuity?
+
+And so, same thing here, the third 
+derivative at the end of curve A
+
+has to match the third derivative 
+at the start of curve B
+
+This is now getting significantly more messy
+
+The geometric interpretation is 
+almost useless at this point but
+
+we’re basically taking the vector from P₀ to P₃
+
+adding it to P₃
+
+then we take the vector from 
+P₂ to P₃ and from P₂ to P₁
+
+add those two together
+
+add it to the first vector
+
+and multiply it [deep breath]
+
+by 6
+
+Long story short, the position of P₆ 
+is now determined by P₀ P₁ P₂ and P₃
+
+Our problem of losing local control 
+has now reached its worst case
+
+We don’t have control over P₉ 
+anymore, and the same goes for P₁₂ 😔
+
+The curve is now even more 
+sensitive to the initial conditions
+
+a tiny movement of a control 
+point in the first curve,  
+
+will massively throw the rest of the spline around
+
+In fact, we’ve lost so much control, that 
+this can’t even be called a spline anymore
+
+it’s actually equivalent to simply 
+extrapolating the first curve,  
+
+by increasing our t-value beyond 1
+
+And since this is now just, one 
+curve, not only is it C³ continuous
+
+it’s actually C∞ because there are no joins 
+anymore, all derivatives are connected
+
+To summarize - in a cubic bézier, when the 
+tangent points are mirrored, we have C¹ continuity
+
+When we have a broken join, the velocity is no 
+longer continuous, so it’s only C⁰ continuous
+
+When the curve is entirely disconnected, 
+there’s no continuity at all
+
+An important thing to remember,  
+
+what we’ve been focusing on is the 
+continuity at the join between curves
+
+because every other point on the curve, 
+is C∞, as they use the same function
+
+For a more formal definition, two functions A,  
+
+and B, are Cⁿ continuous, if the 0ᵗʰ through 
+the nᵗʰ derivative are all equal at the join
+
+This, is called, Parametric Continuity
+
+Continuity is absolutely central 
+to the discussion of splines,
+
+and it’s actually the primary motivator for 
+investigating multiple different types of splines
+
+But, we’re not quite done yet with continuity,  
+
+because there’s a different type of 
+continuity lurking in the shadows
+
+So we now know, mirrored 
+tangent points are C¹, alright
+
+broken tangent points are C⁰
+
+but, what about aligned tangent points?
+
+Clearly, there’s some kind of 
+continuity we care about here
+
+Even if it has a sudden speed change
+
+If we’re using these for vector graphics, 
+we don’t really care about “speed”
+
+we only care about the shape it creates in the end
+
+This is exactly what Geometric 
+Continuity is all about
+
+When we look at the velocity, sure, it 
+might have this sudden jump in length,  
+
+which, in this case is a change in speed
+
+but again, what if we don’t care about speed?
+
+What if we only care about the shape?
+
+To analyze this, we can get the tangent vector 
+by simply normalizing the velocity vector
+
+in other words, forcing it to have a length of 1
+
+Let’s also throw in the normal vector
+
+because it’s trivial to calculate in 2D, and 
+it helps us visualize this a little better
+
+Now, this is, perfectly continuous, right?
+
+the change in speed has literally 
+no effect on our tangent and normal
+
+This is called Tangent Continuity, 
+and we’re going to call this G¹
+
+At this point, you probably 
+know where this is going right?
+
+That 1 next to the G is practically 
+begging us to investigate
+
+what is G²?
+
+This is not just a mathematical curiosity,  
+
+G² continuity is actually 
+crucial in industrial design
+
+especially for shiny things 
+like car bodies or phones
+
+and perhaps a little sneakily, 
+the shape of the apple app icon
+
+In order for us to analyze this,  
+
+we’re gonna have to enter the third 
+dimension, and turn on the lights
+
+What we’ve got here, is a perfectly reflective 
+surface, which will help us analyze the geometry
+
+If we look closely, we can see 
+that, something is, wrong here
+
+Our tangents are perfectly aligned
+
+and yet, somehow, there’s 
+a seam in our reflection!
+
+Isn’t it enough to just, align the tangents?
+
+Clearly, it’s not
+
+And if we change the background to these dots,  
+
+it’s made even more clear 
+just how discontinuous this is
+
+This doesn’t just apply to bézier curves
+
+A perhaps unexpected place 
+where this problem occurs
+
+is when you join circular arcs to flat segments
+
+Here too, we see this extremely 
+sharp discontinuity at the seam
+
+And again, the dots will 
+make an even stronger case
+
+And there’s no trick  
+
+here! These are perfect, circular arcs
+
+But they too, only join with G¹ continuity
+
+which might be a little unexpected, since we 
+often think of circles as this ideal smooth shape
+
+So what is going on here?
+
+First, let’s look at the tangent directions
+
+Now, they have quite a bit of overlap, so, 
+for clarity let’s use the normals instead
+
+Now watch how they change as 
+we move them across this path
+
+You might notice they suddenly start 
+and stop rotating at the joins,  
+
+right where the circular 
+arcs meet the flat segment
+
+The angle of the tangent vector can 
+illuminate this problem even more clearly
+
+Notice how the angle is 
+changing at a constant rate,  
+
+then comes to a complete stop, and then 
+it suddenly and immediately starts again.
+
+In fact, this is inherent to the nature of circles
+
+Circles are the special case where the 
+angle is changing at a constant rate
+
+and flat lines is the special case 
+where the angle doesn’t change at all
+
+So how do we even begin to analyze this, 
+to find out more about G² continuity?
+
+We need a parameter-independent, or, 
+speed-independent way to measure this
+
+This, is where we need to talk about curvature
+
+Given a point on a curve, there’s a circle 
+that describes the curvature at that point
+
+This is called the osculating circle
+
+You can think of it as, the circle that has 
+the same curvature as the curve, at that point
+
+The radius of this circle, is 
+1 divided by the curvature!
+
+Curvature can be calculated using 
+the determinant between the velocity  
+
+and the acceleration, divided by the speed cubed
+
+The determinant up there 
+is a little confusing, but,  
+
+it’s equivalent to what is commonly 
+known as the “2D cross product”
+
+or the perpendicular dot product
+
+or, more accurately, it’s the 
+wedge product returning a bivector
+
+but, that’s a topic for another day
+
+So what does the curvature 
+look like across this spline?
+
+Let’s travel along and see
+
+There are a few interesting 
+observations we can make
+
+The first is that, even though 
+a point is only C⁰ continuous
+
+it’s possible to make the 
+curvature continuous at that point
+
+The second is that, even if a join is C¹, that 
+doesn’t guarantee us curvature continuity either
+
+And of course, it’s especially bad in the 
+middle, where there’s a huge jump in curvature
+
+A very popular way to analyze curvature, is 
+using this handy tool, known as a curvature comb
+
+Let’s again focus on a single 
+join, between curve A and B
+
+The curvature comb grows larger, 
+the tighter the curve turns
+
+and the more flat the curve 
+is, curvature approaches 0
+
+Now, we know that in order for us to have G¹ 
+continuity, we have to align the tangent points
+
+In mathematical terms, this means 
+P4, has to be a vector starting  
+
+from P₃ in the same direction as 
+P₂ to P₃ scaled by some value!
+
+This means we have one degree of freedom,
+
+because this variable β₁ can be any positive value
+
+If it’s 1, the tangents are mirrored, 
+while any other value scales it
+
+You might notice that the curvature comb isn’t 
+lining up - so this is still only G¹ continuous
+
+Now, deriving the math for this next step is,  
+
+significantly more complicated than 
+for the parametric continuity, but
+
+long story short, we now constrain P₅, but we also 
+end up with another degree of freedom, called β₂
+
+Now watch what happens to the curvature 
+comb as we apply this constraint
+
+It’s aligned!
+
+And we actually have two degrees 
+of freedom to control this shape
+
+No matter what values we set β₁ or β₂ to, 
+we’ve successfully made this join G² continuous
+
+And of course, we can also move the control 
+points, and the constraint still holds
+
+Now, the problem is again that, even though 
+we have a few more degrees of freedom,
+
+we have the same cascading problem of 
+losing control over the entire spline
+
+But, did it solve our problem 
+with shiny reflections?
+
+well, yeah, looks like does!
+
+It wasn’t enough to have a continuous 
+tangent direction across this join,  
+
+we also needed curvature continuity to 
+get rid of the seam in the reflection
+
+It will even pass the harder, dot pattern test
+
+This is why G² continuity is very 
+important in industrial design
+
+as anything shiny will respond very 
+strongly to the shape of the curves
+
+G¹ is when tangents are continuous
+
+The curvature comb will also be aligned 
+with itself across the normal of the curve
+
+G² is when curvature is continuous
+
+The curvature comb is now continuous in 
+and of itself, as you can see, it connects
+
+Surfaces that are G² or higher, are 
+sometimes called Class-A surfaces
+
+G³ is when the rate of change 
+of curvature is continuous
+
+The curvature comb will be, in 
+and of itself, tangent continuous
+
+Usually, you don’t go higher than G³, as 
+you get very diminishing returns in outcome,  
+
+and the math becomes significantly 
+more unwieldy for each step
+
+So this, is called Geometric Continuity
+
+A more formal definition of geometric continuity 
+is actually pretty tricky to come up with
+
+but one that I like, is that 
+if you have two curves A and B
+
+they are Gⁿ continuous, if a function g(t) 
+exists, so that A(t) and B(g(t)) are Cⁿ continuous
+
+It’s kinda hard to wrap your head around, but,
+
+it basically means that if 
+we have full control over the  
+
+parameter/speed at which we change 
+the t-value of one of the curves,
+
+if it’s possible to make them line up into Cⁿ 
+continuity, the original curves are Gⁿ continuous
+
+It might seem like a lot to take in, but I 
+can’t stress enough just how important this is,  
+
+continuity is what justifies the 
+existence of a whole host of splines
+
+Let’s summarize it all
+
+C⁰ and G⁰ are equivalent, and they 
+are both positional continuity
+
+It basically means your curves 
+are simply connected in position
+
+C¹ is velocity continuity
+
+as in, the first derivative is continuous, 
+and, the position is also continuous
+
+In other words, it’s not enough for the 
+velocity to be continuous on its own
+
+the previous derivatives 
+have to be continuous as well
+
+G¹ is tangent continuity, which also 
+requires that it has positional continuity
+
+And, this same pattern continues
+
+C² is acceleration continuity, which 
+also implies velocity continuity,  
+
+which also implies positional 
+continuity. You get the idea
+
+C³ is jolt continuity
+
+G² is curvature continuity, which 
+again, implies the previous ones
+
+Finally, we have G³, which, in my opinion, 
+is incorrectly called “torsion” continuity,  
+
+it’s also sometimes incorrectly 
+called acceleration continuity
+
+I don’t know of a good name 
+for this unfortunately,  
+
+but it’s effectively referring to 
+the rate of change of curvature
+
+And so on! We can go on forever, until C∞ and G∞
+
+Now, just like all the parametric 
+continuities include all previous levels,
+
+and geometric continuity includes 
+all their previous levels,
+
+there’s another connection here
+
+C¹ continuity is also necessarily G¹ continuous
+
+If you remember, mirrored 
+tangent points are also aligned
+
+Effectively, G-continuity is 
+less strict than C-continuity
+
+so the C continuities actually imply their 
+corresponding geometric continuity as well,  
+
+but, not the other way around
+
+…generally
+
+before someone comments going “well 
+actually”, I have to throw in a little caveat.
+
+This implication only applies 
+if the curves are regular
+
+Now this is a bit of a, math moment, because of 
+course “regular” has a particular meaning here,  
+
+that isn’t the regular meaning of the word
+
+A regular curve is one where 
+the velocity is never 0
+
+In other words, it never stands perfectly still
+
+In fact, if we let this happen, a lot of our math 
+we’ve been talking about breaks down completely
+
+Both getting the tangent direction, 
+and calculating the curvature,  
+
+divides by 0 if there is a point with 0 speed
+
+It’s relatively hard to create a curve with 
+this pathological behavior, but, not impossible
+
+For example, take this bézier curve
+
+If we place the tangent points at this exact 
+location, we’ve created a point with 0 speed
+
+The curve is fully continuous, but 
+watch what happens to the tangent
+
+It instantaneously flips, which 
+means it has a tangent discontinuity
+
+This is called a cusp, and it’s one 
+of those rare exceptions where the  
+
+curve is C∞ but only G⁰ continuous, at this point
+
+We’ve only been talking 
+about Bézier splines so far
+
+but now that we’re equipped with this 
+extremely powerful tool to analyze continuity
+
+I think it’s time to visit the other 
+splines in the extended universe
+
+While the bézier curve is useful, its 
+points are pretty, strange, are they not?
+
+They don’t really refer to anything 
+specific, except the start and the end point
+
+What if, we can come up with another type 
+of spline, that makes more physical sense?
+
+What if instead of supplying 4 points, 
+we set the start and end point, as usual
+
+but then, we also set the start and end velocities
+
+Another way of looking at it - we’re 
+supplying the boundary in position and  
+
+the boundary in velocity, and then 
+solving for the connection between
+
+This could be really useful when 
+simulating physical objects,  
+
+or even when interpolating 
+movement data across a network
+
+This means we’ll have a spline that 
+automatically satisfies these constraints
+
+It effectively auto-calculates the 
+acceleration and jolt, to make this curve
+
+Coming up with this spline is 
+actually pretty straightforward!
+
+As with any other math problem, 
+let’s list our known values,  
+
+and our constraints, and solve from there
+
+The start of the curve should be at P₀
+
+The end of the curve should be at P₁
+
+The velocity at the start should be v₀
+
+The velocity at the end should be v₁
+
+4 equations means 4 unknown 
+variables to solve for,  
+
+which means we can use a cubic 
+polynomial, solving for a, b, c and d
+
+For example, one of them we can figure 
+out immediately just by looking at it
+
+If the equation should give us P₀ when t = 0,  
+
+then a, b and c are all multiplied 
+by 0, this means that d has to be P₀
+
+The same goes for the derivative 
+when t = 0, c has to be v₀
+
+And so on!
+
+I’ll spare you all the intermediate steps,
+
+here’s what we end up with, 
+the matrix form of this spline
+
+Now you might see the power of the matrix form
+
+We now have the exact same setup where,  
+
+we have a powers of t matrix on the 
+left, and a point matrix on the right
+
+and then the characteristic matrix in the middle,  
+
+giving us a kind of unique 
+fingerprint for this spline
+
+Just like before, multiplying the 
+t-matrix by the characteristic matrix,  
+
+gives us the basis function for each control point
+
+This is what our new spline segment looks like!
+
+The cool thing about this one is that 
+there’s no more arbitrary tangent points
+
+it’s a spline that guarantees 
+being at a specific place,  
+
+with a certain velocity, at every control point,
+
+giving us a lot of control over 
+the animation across the spline
+
+If we analyze the first derivative, the velocity,  
+
+you can see it matches at every point along 
+this spline, and it’s fully continuous
+
+Though you might’ve noticed that the velocity 
+itself looks like it changes pretty harshly
+
+so, let’s look at the rate of change 
+of the rate of change - acceleration
+
+Here, you can see that we have 
+our first proper discontinuity
+
+There’s an instantaneous change 
+of acceleration at each join
+
+In other words, while this spline doesn’t meet 
+the criteria for C² continuity, it is always C¹
+
+This type of spline where you supply explicit 
+velocities at each point, actually has a name!
+
+This is called a Hermite spline.
+
+Or, I mean, if you’re French you’re 
+probably dying inside right now
+
+technically I think it’s supposed to be 
+pronounced [bad french voice] Hermite
+
+but nobody says it like that 
+okay so cut me some slack
+
+Anyway, as you can see, the hermite 
+spline has explicit derivatives
+
+And since both sides of each curve 
+join share the same velocity,  
+
+it is also by necessity C¹ continuous
+
+It’s also worth noting - many hermite splines 
+out there allow for two velocities per join
+
+one for the incoming curve, 
+and one for the outgoing curve,  
+
+allowing you to make C⁰ joins as well if you like
+
+It’s also interpolating, it’s passing 
+through every point and every velocity.
+
+Now, the hermite spline is actually very 
+closely related to the bézier spline
+
+Converting between the two is trivially easy
+
+If you divide each velocity by three, and add 
+its origin, you get the bezier tangent point
+
+Flip that to the other side, and you now have 
+the bézier control point for the other side
+
+This creates the exact same curve as the hermite 
+spline, but defined using béziers instead
+
+This also tells us that the bézier tangent points,  
+
+correspond to exactly a third 
+of the velocity at the join
+
+Next up is a spline we’ve been 
+neglecting this whole time,  
+
+which might be the most popular one out there
+
+People just rarely call it a spline
+
+The linear spline!
+
+Simply, drawing straight lines between each point
+
+And we might scoff at this shitty little basic 
+spline but it actually has a few superpowers
+
+First, it’s passing through every control point!
+
+No unnecessary bells and whistles, 
+just straight to the point
+
+(no pun intended)
+
+Second, it’s one of the few splines where 
+arc-length parameterization is easy!
+
+Arc length parameterization is when you want 
+to interpolate a curve with a constant speed
+
+which is actually very complicated 
+for almost all splines out there
+
+Third, it’s very cheap to evaluate! 
+Here’s the formula, it’s just a lerp
+
+But, unfortunately, it’s only ever C⁰ continuous
+
+This property of passing through every 
+point you supply is very useful though
+
+so we might ask, is it possible 
+to make a smoother spline,  
+
+that will pass through them all, 
+without having to specify derivatives?
+
+One method, is to use a similar 
+strategy as the hermite spline
+
+but instead of supplying the velocities ourselves,  
+
+what if we calculate them 
+based on neighboring points?
+
+We simply draw a vector between the neighboring 
+points, and use that as our velocity
+
+And we repeat this process for every point
+
+Look at the neighbors, form a vector, 
+use that as our velocity, and so on.
+
+This is the curve we get
+
+Now, it’s not, perfect, there are a few problems
+
+First, it doesn’t actually 
+pass through the endpoints,  
+
+because they’re missing one of their 
+neighbors to calculate a velocity from :(
+
+But, we can sort of, pretend 
+we have an extra point,  
+
+that’s just the second adjacent point mirrored
+
+This lets us extend the curve to the endpoints
+
+And we do the same for the last point
+
+mirror the second last point around the 
+last one, to create this, ghost point
+
+The second thing we might 
+notice, is that the shape is,  
+
+kinda weird isn’t it? No offense to this 
+spline of course but it’s rather, lumpy
+
+For example, this part right here is very flat
+
+And this part, has a pretty 
+sharp turn around flat sections
+
+A good tool for analyzing 
+this is the curvature comb
+
+We can now clearly see the radical 
+change in curvature across this spline
+
+this sharp turn now has a very clear bump
+
+and this flat section very clearly has curvature 
+drop to almost 0, meaning it’s linear, or, flat
+
+Maybe it’s a good idea to find some way to 
+mitigate these sharp turns and flat sections
+
+What if we apply a scale 
+factor to all these velocities?
+
+Just, scale them all down by some value
+
+You can see the curve becomes much more relaxed
+
+And as we continue, it actually 
+approaches the linear spline
+
+So with this scale parameter, we have a lot 
+more control over the sharpness of the curve
+
+Bringing back the curvature comb, 
+you can see that with a low scale,  
+
+the curvature is extreme at the joins, and 
+quickly flattens along most of the segments
+
+Increase the scale, and the 
+curve becomes much more relaxed,  
+
+before getting a little 
+bumpy again at a scale of 1
+
+This type of spline with automatic tangents,  
+
+a scale parameter, and interpolating 
+all points, is called a cardinal spline
+
+Here’s what its matrix form looks like!
+
+As a side note, when you read 
+up on cardinal splines online,  
+
+usually they call this scale “tension”
+
+but there’s no consensus on 
+how to apply this tension value
+
+I’ve found three different 
+methods across the internet
+
+so I’m just giving up, and calling it scale
+
+because I think this is the most computationally 
+efficient way to define it anyway
+
+The cardinal spline however, is usually 
+overshadowed by a closely related spline
+
+When we set the scale to exactly ½, the 
+spline looks, unusually relaxed, doesn’t it?
+
+There’s no super flat sections, and no super 
+sharp turns where it doesn’t feel justified
+
+It’s a very, comfortable spline, 
+where you pass in some points,  
+
+and it “just” smoothly passes 
+through without too much effort
+
+This is one of the most popular splines 
+in game development for this reason,
+
+and it’s called the catmull-rom spline
+
+It passes through every point (except the 
+endpoints that kind of need special handling)
+
+As for continuity, the curvature 
+comb tells us it is G¹ continuous
+
+Let’s also look at the parametric continuity
+
+The first derivative is fully continuous
+
+The second derivative however, is not connected, 
+you can see there’s discontinuities here,
+
+so in the end, the catmull-rom 
+spline is C¹ continuous
+
+And there’s no need to specify 
+tangents, it “just works”
+
+Of course, we can work out the 
+matrix form of the catmull-rom  
+
+as well, letting us see its unique 
+fingerprint, and its basis functions
+
+Let’s actually take a closer 
+look at these basis functions,  
+
+because they very clearly illustrate 
+their relationship with these points
+
+Remember - the basis functions 
+say how much every control point  
+
+should influence a given point in the curve
+
+and so if we arrange them a little 
+differently, it’s now easier to tell  
+
+how this represents the influence of a 
+single point, across 4 curve segments
+
+To highlight this, let’s focus 
+on one point, and its influence
+
+The white section is where the point is 
+pulling on the curve with a positive influence
+
+while the red section is getting pushed away 
+by the point, as it has a negative influence
+
+And this is how every control point behaves
+
+Every point has its own wave like this,  
+
+telling us how much it should 
+influence each part of the spline
+
+This is what the full spectrum looks like
+
+These influences then work together, 
+to carry a point across the spline
+
+Each point has a peak, where it 
+has 100% influence, guaranteeing  
+
+that the point on the curve will be at 
+the same location as the control point
+
+and then its influence will drop 
+off, letting the next point take over
+
+A really neat thing is that we can analyze these 
+basis functions on their continuity directly
+
+We can tell that this one is 
+continuous, because all curves meet,  
+
+and the ends are meeting with the x 
+axis line, and so C⁰ continuity is met
+
+And what about the derivative 
+of these basis functions?
+
+They are also continuous
+
+so we’re at least C¹, which we would expect
+
+The second derivative, 
+however, has discontinuities,  
+
+you can see how there are gaps in the 
+graph, so we’re still not C² continuous
+
+And isn’t this a little frustrating? 
+we’ve explored all these new splines,  
+
+and yet we’re still stuck in C¹ continuity land
+
+Is there really no way to make a C², 
+an acceleration continuous, spline?
+
+Well, the best way to test this, is to 
+try doing it yourself. In other words,  
+
+you know, fuck around and find out
+
+Remember, the fingerprint of a cubic spline, 
+is the characteristic matrix in the middle.
+
+The challenge now is to find the 16 unknown 
+values, to make a C² continuous spline.
+
+This means, we need 16 equations to solve 
+this, and let’s see if we can make it work!
+
+The end of the first basis function 
+has to be C² continuous with the x axis
+
+That’s 3 equations
+
+The join between the first two 
+basis functions, also has to be C²
+
+So 6 equations
+
+We want a C² join between 
+the middle basis functions
+
+Nine equations
+
+C² join between last two basis functions
+
+12 equations
+
+The start of the last basis function 
+has to be C² with the x axis
+
+15 equations
+
+We, did it, right? kinda? sort of?
+
+We’ve actually fit all of 
+our constraints in, right?
+
+But, we need one more constraint, right 
+now we have one degree of freedom.
+
+Luckily, we are actually missing one more thing
+
+The basis functions all have to add up to 1, 
+because they are used as a convex combination
+
+16 equations, 16 unknowns, this is now solvable!
+
+I’ll be skipping the steps involved in 
+solving this system of 16 equations,  
+
+but, just trust me that it’s possible~
+
+And so now, instead of the 
+catmull-rom basis functions,  
+
+this is what our new basis functions look like!
+
+This, looks, really really 
+smooth, I think we’ve done it
+
+This should be a cubic C² continuous spline,  
+
+where these are the values we end 
+up with in our characteristic matrix
+
+And now, the big question - 
+what does this spline look like?
+
+Well, it looks like this
+
+This might be, a little surprising
+
+This is the first time the curves 
+don’t actually meet at control points
+
+The curves and their joins are 
+completely outside of the control points.
+
+But what about continuity? This was, after all, 
+our goal (to make a ridiculously smooth spline)
+
+If we look at the curvature 
+comb, it seems G² continuous!
+
+The comb is aligned and connected across 
+the joins, no matter what shape we use,  
+
+so our geometric continuity is looking really good
+
+We can also tell it isn’t G³ continuous, since 
+the curvature comb itself isn’t tangent continuous
+
+Remember, when we tried to force the bézier spline 
+to be more continuous, we lost local control?
+
+Moving any one control point, affected the 
+rest of the spline under those constraints.
+
+But for this spline? We’ve still got local control  
+
+over all the control points, 
+and, keeping continuity intact!
+
+So, the geometric continuity of this spline, is G²
+
+How about parametric continuity?
+
+Well, we know it’s at least C⁰, but did we 
+manage to make it C² continuous as well?
+
+Let’s analyze it using animation this time!
+
+If we notice any sudden 
+jumps, we have a discontinuity
+
+The first derivative, in other words, the 
+velocity vectors, are all looking very smooth!
+
+There are no sudden jumps as they pass the joins
+
+So, this spline is at least C¹ continuous
+
+Next up is acceleration!
+
+I like to think of the acceleration vectors 
+as “pulling” on the velocity vectors
+
+and so I will draw them at the 
+tip of each velocity vector
+
+And let’s see if we notice any sudden jumps.
+
+Again, the arrows never make 
+any instantaneous change!
+
+This means we succeeded - we 
+finally have a C² continuous spline!  
+
+possible it’s C³ continuous too?
+
+Well, that would be impossible, since the 
+geometric continuity would have to be at least G³
+
+but if you’re curious, this is 
+what the jolt vectors look like,  
+
+pulling on the acceleration vectors
+
+As expected, this is where we have our first  
+
+discontinuity - the jolt vectors 
+jump as we pass across the joins
+
+So this soft little spline, while 
+it’s not interpolating, like, at all
+
+it is actually C² continuous
+
+The reason this is possible is because 
+we sacrificed the interpolating property,  
+
+in favor of acceleration continuity
+
+Of course, this spline has a name!
+
+it’s called a B-spline, short for Basis Spline
+
+Now that we’ve been looking at these 
+for a while, it’s time for a quiz
+
+What spline is this?
+
+It might be hard to tell
+
+It requires an unreasonably, actually 
+impossibly keen eye to determine
+
+But clearly it’s a bézier right?
+
+You can practically see the control 
+points just by looking at it
+
+or hm wait maybe it’s a hermite spline?
+
+like you got the velocities and all
+
+or I guess it could be a catmull-rom
+
+passing through the points like that
+
+no wait it’s obviously a B-spline, 
+look at how smooth this shape is!
+
+or, what if it’s, a trajectory!
+
+with a starting point, initial velocity, 
+initial gravity, and a change of gravity!
+
+It’s the path in space with a changing 
+gravitational pull, traversing for one second
+
+That’s what this is
+
+Look we can even do the 
+matrix form for trajectories!
+
+which, personally I think is super cool in 
+and of itself, but, that’s a bit of a tangent
+
+So, what’s happening here, trick question aside,  
+
+is that, all of them can 
+generate this specific curve
+
+Because all of these individual spline segments  
+
+we’ve been talking about, 
+are actually very similar
+
+First, they are all uniform! They presume 
+you want to interpolate in a 0 to 1 range
+
+Second, they are all cubic 
+polynomials. They all fit this formula
+
+So, if they can generate the same curve, 
+what’s even the point of different splines?
+
+So what I want you to keep in mind, is that,  
+
+curves themselves are not splines! 
+they are generated by splines
+
+it’s all about how multiple curves, connect, 
+and how smoothly they are able to do so
+
+What splines really describe, is 
+a transformation of control points
+
+Given some control points, you 
+use a spline, to generate curves
+
+If you swap out the spline, but keep the 
+control points, you get different curves
+
+I want you to think of splines as curve 
+generators, that make certain promises  
+
+about continuity in the curve joins, and 
+how it treats the input control points
+
+So it’s not just about the end result, 
+but the process you used to get there
+
+You know as they say, “it’s about 
+the journey, not the destination”
+
+except it’s still a little bit 
+about the destination too, but,
+
+you know what I mean I’m trying to 
+make some sort of circular compos-
+
+To summarize the family of 
+splines we talked about today
+
+The Bézier spline gives us 
+a huge amount of control
+
+It lets us create sharp corners, in other 
+words, intentional tangent discontinuities
+
+Which is very useful when defining shapes like 
+fonts or vector graphics, such as this heart
+
+Hermite splines let us 
+define explicit derivatives,  
+
+guaranteeing it will pass through 
+its points with specific velocities
+
+This is the most common spline for animation,  
+
+and its the basis for the animation 
+curve editor in Unity, the game engine
+
+For example, let’s say we want 
+to animate a jumping square
+
+We can model its vertical position over 
+time using a non-uniform 1D hermite spline
+
+Remember, non-uniform means the time 
+interval between joins can vary,  
+
+which is a little bit more complex than 
+the uniform hermite we talked about today
+
+Anyhow, this lets us animate it!
+
+We can use another spline to make it do a 
+little flip, by changing its angle over time
+
+Let’s also animate its scale to 
+make it all squishy and goopy~
+
+The Catmull-Rom is the easiest way 
+to “just” smooth a set of points
+
+when you want it to automatically 
+calculate the velocity, which is very  
+
+useful for path smoothing, where passing 
+through exact points can be important
+
+The B-Spline guarantees C² continuity, and so 
+it’s the most popular spline in industrial design
+
+as it allows you to design curvature sensitive 
+reflective surfaces without losing local control
+
+In addition, some animations 
+are also acceleration sensitive
+
+such as the movement of a camera,  
+
+where instantaneous changes in 
+acceleration look pretty jarring
+
+The linear spline is not very smooth, but 
+in some cases it either doesn’t matter,  
+
+or, you have so many control points 
+that it appears smooth in context
+
+For example, if you need to draw a curve 
+in a youtube video about about splines
+
+the easiest and most practical solution 
+is to simply sample the curve densely  
+
+enough so that it looks smooth, 
+when drawing it as a set of lines
+
+Now, we’ve only really scratched 
+the surface of this enormous topic
+
+In this video, we’ve mostly been talking about 
+a specific subset - uniform cubic splines
+
+All of these have counterparts of higher degrees
+
+All of them also have non-uniform variants, 
+like the non-uniform hermite spline we just  
+
+used for the jumping box animation, where 
+you have full control over not only the  
+
+position and velocity at the control points, 
+but also the time at which it should reach it
+
+Or the non-uniform catmull-rom which has 
+some interesting geometric properties  
+
+when you set the knot intervals based 
+on the distance between the points.
+
+And while the uniform B-spline we looked 
+at earlier was useful in its own right,
+
+if we allow changing the time or knot 
+values, we get the non-uniform B-spline
+
+All the continuity promises of 
+the B-spline are still intact,  
+
+but each curve in the spline will now use 
+unique basis functions, based on the knot values
+
+This, in turn, affects the shape of the spline too
+
+There’s an even more advanced variant, 
+called the non-uniform rational B-spline,  
+
+that lets you control the priority, 
+or, weight, of each control point
+
+making the curves gravitate toward 
+or away from specific control points
+
+You might even have heard of this one before
+
+it’s more commonly known by its short name
+
+NURBS
+
+And, remember the color gradient 
+in the beginning of the video?
+
+Well, every color lives in the space of the RGB 
+cube, where the dimensions are red, green and blue
+
+So every color key in a gradient, is a control 
+point of a linear spline, in color space
+
+Then, if we want to use this 
+as a gradient map on an image,  
+
+instead of using time as our input, we use the 
+brightness of its pixels to sample the gradient
+
+The output is then in full 
+color, based on our color spline
+
+If we then move the control 
+points, in other words,  
+
+change the colors and time of our 
+keys, the output changes along with it
+
+As you can see, splines show up in 
+many, perhaps, unexpected places
+
+The whole field goes much deeper 
+than what we had time for today
+
+but I hope you found this 
+little exploration of math  
+
+noodles interesting - and thank 
+you all so much for watching ❤
+
+I wanna give a huge shoutout to Jazz Mickle, for 
+the audio & music that she made for this video
+
+I also wanna thank Thor and 
+Salad and Toast, our cats,  
+
+that, did a good job interrupting 
+me recording the voiceover for this
+
+This here is salad
+
+He's currently chasing Thor 
+which he's not allowed to do
+
+He's being a bad boy
+
+yeah
+
+And then finally, I wanna thank all of you! All of  
+
+the patreon supporters that have 
+made this entire video possible
+
+So thank you so much for supporting me.
+
+I also wanna say that if you're not a supporter 
+on patreon, I think you should me! If you like the  
+
+work that I do. Patreon is also the,, it's like 
+the only platform, that only takes 5% of the cut
+
+most other platforms take like 30% or 50%, which 
+is absolutely ridiculous, and so patreon is like  
+
+a really really good place to support work 
+in general, so I would really recommend that!
+
+So, this video took, about a year to make. 
+A little bit over a year, I think, from,  
+
+starting research, to releasing it on youtube
+
+I think the scope of this video was 
+way too big. I kinda realized that,  
+
+splines is a very big topic. Like there are so 
+many different avenues you can go, there's so  
+
+many different things you can talk about, and, I 
+kept like adding more and more stuff to the video,  
+
+and I always wanna go like into, in-depth about 
+every topic I talk about. And, it's impossible,  
+
+for this. I can't go too in-depth about splines, 
+because then the video is gonna be like,  
+
+12 hours long, if I wanna cover everything that 
+I researched. And so, I think going forward,  
+
+I realized that, I should pick smaller topics! 
+Or, kinda plan from the beginning to make them  
+
+in chunks, instead of planning for making a very 
+long video. The initial goal for this video was  
+
+to make a video that starts with lerp, and ends 
+at NURBS, which, I guess I kind of did? Except  
+
+I didn't go into detail, how NURBS work. Because 
+we didn't really talk about non-uniform splines.
+
+This project was, incredibly big. I think I got 
+like 3-4 months of work done, and then I burnt out  
+
+completely, and, I couldn't work on it. I just 
+couldn't. I started shutting down. I couldn't,  
+
+like, focus a single moment on, working on 
+this, for several months. Which was really  
+
+really frustrating, because, I'm someone who 
+really like, gets a lot of value out of being  
+
+productive and getting things done. And so it 
+was, very hard to deal with, and I think I'm  
+
+still recovering from it. I wish I'd picked 
+a smaller scope for this video, because now,  
+
+even though I'm happy it's the length 
+it is, and it has a lot of information,  
+
+at every corner of the video, I know that there 
+are things I'm leaving out that I really wanted to  
+
+talk about. But I just couldn't make all of those 
+animations and all of those ideas. I couldn't just  
+
+cram it all into this video, and so unfortunately, 
+it is "just" one hour long, and it only covers the  
+
+most popular uniform splines. But, I mean, I've 
+done all of that research, I've implemented all of  
+
+that in code, and so if I want to make a future 
+video about non-uniform splines, or NURBS, or,  
+
+specific other types of splines, I can do that. 
+And so I have the option in the future at least
+
+Okay, so, I wanted to do a bit 
+of a, prediction game, this time!  
+
+As usual, youtube comments are the way they are, 
+and so I thought I'd, you know, now that we're at  
+
+the tail end of the video, where, statistically, 
+none of you are here. Like you who are watching  
+
+this, you are the exception. There's like a- 
+extremely- everybody's trailing off at this  
+
+point. And so you are like 1% or something. 
+And so I'd like to share with you, a little  
+
+bit of a thing we can see, if the chat (youtube 
+comments) is gonna get started talking about.
+
+Here are my predictions
+
+I predict that, someone is gonna correct me, or,  
+
+incorrectly correct me, about 
+how I pronounced "osculating".
+
+In the bézier video, I said [ossu-layding] 
+for the osculating circle, I mispronounced it.  
+
+But people thought I said "oscillating", like, 
+the, O-S-C-I-L-L and so people kept correcting  
+
+me about that, and it was a nightmare for like, 
+several days, I just had notifications about that  
+
+forever and ever. And so I think now I'm gonna 
+get the opposite, now I pronounced it correctly,  
+
+and now people are gonna incorrect me, in 
+the comments. And so that's gonna be fun!
+
+I think someone is gonna be like "oh your 
+should reduce the matrix form of the trajectory,  
+
+because you can simplify that diagonal 
+matrix". Someone is gonna do that
+
+People are gonna think that my definition 
+of splines is either wrong, or, they're  
+
+gonna complain that I never accurately defined 
+what a spline is. I think this might happen,  
+
+I think a lot of people use the word 
+spline to mean different things, but,  
+
+hopefully I made my case for my definition.
+
+Someone is gonna say, "you forgot to mention that 
+NURBS can make circles", which, I didn't forget,  
+
+I left it out, because I think it's an interesting 
+topic on its own, and so in the spirit of trying  
+
+to make shorter videos, this is a perfect, 
+bitesize topic to talk about in a single video,  
+
+and so I think I'm gonna talk about circular 
+arcs and splines in a video in the future.
+
+And then there's a bunch of topics where, I 
+think people are gonna be like "you forgot  
+
+to talk about [this]" because they wanna 
+like, flaunt their knowledge about splines.  
+
+So I think we're gonna get people saying I forgot 
+to talk about natural splines, polar blossoming,  
+
+the DeBoor construction of the B-spline, 
+the A-frame construction, knot insertion,  
+
+degree elevation, knot multiplicity, the 
+β-spline, the kochanek-bartels spline (idk  
+
+how to pronounce it, it's something like 
+that), spiro splines, biarcs, and lagrange  
+
+interpolation, which, is not even a spline, but..
+I think those are the things that people are gonna  
+
+think that I forgot to mention, but, I actually 
+just left them out, because I need to have,  
+
+a life, and not continue burning out. Let's say 
+we're just saving all of those for a future video.
+
+Oh yeah another thing I also left out was that, I 
+spent quite a lot of time trying to invent my own  
+
+spline. I really wanted to end the video inventing 
+something new. And kind of, contribute to the  
+
+field, I suppose. That ended up almost happening. 
+I did make a spline, but, it had a bad shape.  
+
+It looked ugly. The point was that I wanted to 
+make a spline, that would pass through every  
+
+point, kinda like the catmull-rom, but it would 
+do that with C² continuity. The tradeoff was that,  
+
+I made it one degree higher, it was quartic 
+instead of cubic. And it, actually works? I  
+
+managed to make it pass through points with 
+C² continuity, but, it was just a bad shape,  
+
+it was like almost linear between the points, 
+and then it did a quick curve, and then it was  
+
+linear again between the other points, and so, 
+it ended up not being a very useful spline,  
+
+which, I was a little bit disappointed once I 
+finally solved it. And I could only work out  
+
+the uniform variant, not the non-uniform 
+variant. And so that's not in the video.
+
+One thing that I noticed when making this is that, 
+I feel like I struggle to kind of find my voice. I  
+
+don't know what my cadence is supposed to be, or 
+how I should sound in a video essay. I do most of  
+
+my work livestreaming, and so, there, I sound much 
+more natural than I do reading a script. I think  
+
+I might be experimenting a little bit more with 
+that in the future, like changing the style of my  
+
+presentations or youtube videos I guess. I always 
+feel like my personality is not shining through,  
+
+when I make this type of video. Because the 
+script is so straight, I really think it's  
+
+missing so much of, me. And so I might change it 
+up a little bit, or I'll just learn as I go along  
+
+I guess. I just feel like my delivery is not, 
+interesting. I feel like it's very flat and,  
+
+objective, and lacking personality. 
+But we'll see, hopefully it's fine!
+
+Oh, I also wanted to mention, a lot of 
+the work that I've done making this video,  
+
+I've been streaming it on twitch. I also do my 
+live lectures on youtube, and so if you wanna  
+
+watch a series on shader programming, if you're 
+watching this live, there's gonna be a series  
+
+on that next week, that I'm gonna stream 
+on youtube, so, be sure to check that out.
+
+But otherwise, again, thank you so much for 
+watching this video. This was such a long journey.  
+
+I'm, again, I have ideas for shorter video in the 
+future. I have, I think I'm gonna make a video  
+
+about like a tiny topic, a topic like, "what 
+are radians?". That seems like a very bitesize  
+
+topic that I can then accidentally blow up to 30 
+minutes, but 30 minutes is a lot more manageable  
+
+than 1 hour, so, hopefully that's what's gonna 
+happen. Hopefully I'm not just gonna release one  
+
+video per year, I think I'm gonna try and increase 
+that frequency a little bit more by picking  
+
+smaller topics, but, again, thank you so much 
+for joining, and I will see you all next time!
+

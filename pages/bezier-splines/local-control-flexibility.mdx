@@ -1,0 +1,51 @@
+import { Callout, Steps, Step } from "nextra-theme-docs";
+
+# Local Control and Flexibility
+
+One of the key advantages of using Bézier splines is the ability to maintain **local control** over the shape of the curve while maintaining a high degree of flexibility. This is achieved through the arrangement of control points and the influence of tangent points.
+
+## Tangent Points and Their Configurations
+
+Tangent points, which are the two control points adjacent to each curve join, play a crucial role in determining the shape and smoothness of the Bézier spline. There are three common configurations for tangent points:
+
+1. **Split Tangents (Broken Tangents)**: This configuration allows for sharp corners and intentional tangent discontinuities, which can be useful in creating precise shapes like fonts or vector graphics.
+
+2. **Aligned Tangents**: When the three points around a curve join are aligned, it ensures that the two curves are tangent to each other at the join, resulting in a smooth transition.
+
+3. **Mirrored Tangents**: In addition to being aligned, the tangent points can be mirrored around the join, maintaining the same distance from their shared control point. This configuration provides an even smoother transition between curve segments.
+
+<Callout type="info">
+By manipulating the tangent points, you can fine-tune the shape of the Bézier spline while maintaining local control over the curve.
+</Callout>
+
+## Preserving Local Control
+
+One of the challenges in working with splines is balancing the desire for smoothness with the need for local control. As we increase the continuity of a spline (e.g., from C¹ to C² continuity), we often sacrifice some degree of local control.
+
+However, Bézier splines strike a good balance between smoothness and local control. By carefully arranging the control points and tangent points, you can create smooth curves while still maintaining the ability to make localized adjustments without affecting the entire spline.
+
+## Flexibility in Shaping Curves
+
+Bézier splines offer a high degree of flexibility in shaping curves. By adjusting the positions of control points and tangent points, you can create a wide range of shapes, from simple curves to complex, intricate paths.
+
+<Steps>
+### Step 1
+
+Start with a set of control points that roughly define the desired shape of your curve.
+
+### Step 2
+
+Adjust the positions of the control points to refine the overall shape of the spline.
+
+### Step 3
+
+Manipulate the tangent points to control the smoothness and curvature at each join, using the different tangent point configurations (split, aligned, or mirrored) as needed.
+
+### Step 4
+
+Fine-tune the control points and tangent points iteratively until you achieve the desired shape and smoothness for your Bézier spline.
+</Steps>
+
+By leveraging the local control and flexibility provided by Bézier splines, you can create smooth, visually appealing curves that meet the specific requirements of your application, whether it's defining paths in a game, creating vector graphics, or designing smooth surfaces for industrial products.
+
+To learn more about the different types of continuity and their impact on spline smoothness, check out the [Continuity](/continuity) section.

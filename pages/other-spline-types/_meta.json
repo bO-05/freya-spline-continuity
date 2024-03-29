@@ -1,0 +1,5 @@
+{
+  "hermite-spline": "Hermite Spline",
+  "catmull-rom-spline": "Catmull-Rom Spline",
+  "b-spline": "B-Spline"
+}

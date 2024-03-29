@@ -1,0 +1,61 @@
+import { Callout, Steps, Step } from "nextra-theme-docs";
+
+# Hermite Spline
+
+The Hermite spline is a type of spline that allows you to define explicit derivatives at each control point, guaranteeing that the curve will pass through its points with specific velocities. This property makes Hermite splines particularly useful in animation and when interpolating movement data across a network.
+
+<Callout type="info">
+Hermite splines are named after the French mathematician Charles Hermite, although the pronunciation is often anglicized as "her-might" instead of the French "air-meet".
+</Callout>
+
+## Defining a Hermite Spline
+
+To create a Hermite spline, you need to provide the following information for each control point:
+
+- Position (start and end points)
+- Velocity (start and end velocities)
+
+By supplying both the boundary positions and velocities, you can solve for the connection between the points, creating a smooth curve that satisfies these constraints.
+
+## Continuity
+
+Hermite splines are inherently *C¹* continuous, meaning that both the position and the first derivative (velocity) are continuous across the entire spline. However, they are not *C²* continuous, as the second derivative (acceleration) exhibits discontinuities at the joins between curve segments.
+
+<Callout type="info">
+For more information on continuity, check out the [Continuity](/continuity) section.
+</Callout>
+
+## Matrix Form
+
+The matrix form of a Hermite spline is as follows:
+
+$\begin{bmatrix}
+1 & 0 & -3 & 2 \\
+0 & 1 & -2 & 1 \\
+0 & 0 & 3 & -2 \\
+0 & 0 & -1 & 1
+\end{bmatrix}$
+
+This characteristic matrix provides a unique fingerprint for the Hermite spline and can be used to derive its basis functions.
+
+## Relationship to Bézier Splines
+
+Hermite splines are closely related to [Bézier splines](/bezier-splines). In fact, converting between the two is trivially easy:
+
+<Steps>
+### Step 1
+
+Divide each velocity by three and add its origin to get the Bézier tangent point.
+
+### Step 2
+
+Flip that to the other side to get the Bézier control point for the opposite side.
+</Steps>
+
+This process creates the exact same curve as the Hermite spline, but defined using Bézier control points instead.
+
+## Use Cases
+
+Hermite splines are commonly used in animation systems, such as the animation curve editor in Unity. They allow you to precisely control the velocity at each keyframe, making it easier to create smooth, realistic animations.
+
+For example, when animating a jumping character, you can use a 1D Hermite spline to define the vertical position over time. Additional splines can be used to control other properties, such as rotation and scale, to add more life and personality to the animation.

@@ -1,0 +1,4502 @@
+1
+00:00:00,000 --> 00:00:02,100
+For the past year, I’ve been asking myself
+
+2
+00:00:02,100 --> 00:00:04,080
+How do you define a smooth path?
+
+3
+00:00:04,740 --> 00:00:07,500
+It’s an innocent question that 
+seems straightforward at first
+
+4
+00:00:07,500 --> 00:00:10,260
+After all, we’ve used paths throughout history  
+
+5
+00:00:10,260 --> 00:00:13,260
+both in the real world and in 
+my field of game development
+
+6
+00:00:13,260 --> 00:00:17,700
+But it turns out, this goes much 
+deeper than one might expect.
+
+7
+00:00:17,700 --> 00:00:19,980
+What do we mean by path?
+
+8
+00:00:19,980 --> 00:00:22,500
+And for that matter, what do we mean by smooth?
+
+9
+00:00:23,220 --> 00:00:25,380
+I was propelled into a year long journey
+
+10
+00:00:25,380 --> 00:00:27,360
+filled with twists and turns
+
+11
+00:00:27,360 --> 00:00:30,000
+unexpected realizations and discoveries
+
+12
+00:00:30,000 --> 00:00:32,820
+making connections to things 
+I hadn’t thought of before
+
+13
+00:00:32,820 --> 00:00:35,880
+I was knee-deep in research and math papers.
+
+14
+00:00:35,880 --> 00:00:38,880
+I wrote pages and pages of notes, eventually I  
+
+15
+00:00:38,880 --> 00:00:43,140
+got to the point of finding errors in 
+numerous resources online, and then,
+
+16
+00:00:43,140 --> 00:00:44,460
+I got burnt out
+
+17
+00:00:49,080 --> 00:00:52,620
+But, I have finally reached 
+the destination of my journey
+
+18
+00:00:52,620 --> 00:00:54,780
+and this is where yours will begin.
+
+19
+00:00:55,320 --> 00:00:57,480
+I’m so happy to finally share with you
+
+20
+00:00:57,480 --> 00:01:02,220
+the culmination of that year long deep 
+dive, into the continuity of splines
+
+21
+00:01:17,460 --> 00:01:22,620
+In the virtual worlds we create, 
+there’s often a need to define paths.
+
+22
+00:01:22,620 --> 00:01:26,460
+These can take many different forms, such 
+as this conveyor belt in satisfactory,
+
+23
+00:01:26,460 --> 00:01:30,480
+or this more complex type of path 
+that you see in this rollercoaster,
+
+24
+00:01:30,480 --> 00:01:34,320
+using a path for not only 
+position, but for rotation as well
+
+25
+00:01:35,040 --> 00:01:39,120
+We also use paths in 2D games, to animate 
+things like this in a smooth manner
+
+26
+00:01:40,200 --> 00:01:43,980
+In fact, almost all animations in 
+games have a type of path defined  
+
+27
+00:01:43,980 --> 00:01:46,440
+for every single joint in a character’s body
+
+28
+00:01:48,120 --> 00:01:53,040
+Your browser has paths defined for 
+every letter in every word you read
+
+29
+00:01:54,300 --> 00:01:58,800
+Even in art tools, we sometimes use 
+something called a gradient map. This too,  
+
+30
+00:01:58,800 --> 00:02:04,920
+is a type of path, where the input is luminosity 
+instead of time, and the output is in color space
+
+31
+00:02:06,300 --> 00:02:08,280
+Now, these might seem pretty unrelated
+
+32
+00:02:08,280 --> 00:02:11,520
+These are wildly different concepts 
+from all over the digital world,  
+
+33
+00:02:11,520 --> 00:02:13,800
+but there is something they all have in common
+
+34
+00:02:13,800 --> 00:02:15,780
+All of them, are splines
+
+35
+00:02:16,440 --> 00:02:19,140
+And this journey starts, with Bézier curves
+
+36
+00:02:20,460 --> 00:02:23,700
+The most basic way to create 
+a path between two points,  
+
+37
+00:02:23,700 --> 00:02:25,920
+is to simply draw a straight line between them
+
+38
+00:02:26,580 --> 00:02:29,820
+We can then blend between these two 
+points, to find any point in between
+
+39
+00:02:30,660 --> 00:02:36,600
+The input to this function, is a percentage, 
+or, a t-value, a value from 0 to 1
+
+40
+00:02:36,600 --> 00:02:39,840
+that determines how far we want to 
+go from the first point to the second
+
+41
+00:02:44,580 --> 00:02:49,560
+This is the most common type of blending 
+function, known as lerp, or, linear interpolation.
+
+42
+00:02:50,820 --> 00:02:54,540
+Mathematically, we can define lerp as 
+a function that takes a single value,  
+
+43
+00:02:54,540 --> 00:02:56,400
+our t-value from 0 to 1,
+
+44
+00:02:56,400 --> 00:02:59,400
+and uses that to blend between the two points
+
+45
+00:02:59,400 --> 00:03:02,820
+where 0 gives you the first point 
+and 1 gives you the endpoint.
+
+46
+00:03:02,820 --> 00:03:05,700
+But, usually, when we create a path,  
+
+47
+00:03:05,700 --> 00:03:09,000
+we want to be able to create smooth 
+curves, not just straight lines
+
+48
+00:03:10,020 --> 00:03:11,880
+So what if we add another point?
+
+49
+00:03:11,880 --> 00:03:16,140
+Instead of just two points, we now 
+have three, and between them, two lines
+
+50
+00:03:16,140 --> 00:03:21,480
+We can then use the exact same lerp function, 
+to blend between these points on each line.
+
+51
+00:03:22,620 --> 00:03:24,960
+But what if we then connect these two points?
+
+52
+00:03:24,960 --> 00:03:28,320
+We now have a third line, 
+between the interpolated points,  
+
+53
+00:03:28,320 --> 00:03:31,440
+and let’s try using lerp on that line as well
+
+54
+00:03:31,980 --> 00:03:35,880
+Now watch what happens to this 
+point, as we change t from 0 to 1
+
+55
+00:03:38,400 --> 00:03:43,500
+This, is the magic of Bézier curves. 
+Using only linear interpolation,  
+
+56
+00:03:43,500 --> 00:03:45,300
+we end up with a smooth curve.
+
+57
+00:03:46,020 --> 00:03:49,020
+This one in particular, is 
+a quadratic Bézier curve
+
+58
+00:03:50,460 --> 00:03:52,440
+Of course, we don’t have to stop here
+
+59
+00:03:54,180 --> 00:03:57,720
+We can add another point, lerp on those lines,
+
+60
+00:03:58,320 --> 00:04:01,260
+connect those points, lerp on those lines
+
+61
+00:04:01,260 --> 00:04:05,400
+connect those two points, and 
+finally, lerp on the last line
+
+62
+00:04:06,480 --> 00:04:10,200
+And again, this will trace out 
+this beautifully smooth path
+
+63
+00:04:12,780 --> 00:04:18,180
+This one has one more point, and is of one degree 
+higher, meaning this is the cubic bézier curve.
+
+64
+00:04:18,180 --> 00:04:23,340
+The cubic Bézier is by far, the most common curve
+
+65
+00:04:23,340 --> 00:04:27,600
+Almost every font and vector graphics 
+tool, is using the cubic bézier
+
+66
+00:04:27,600 --> 00:04:30,540
+And so it’s worth digging deeper into how it works
+
+67
+00:04:31,380 --> 00:04:32,880
+So let’s write all this down!
+
+68
+00:04:33,420 --> 00:04:35,940
+We have 4 points, P₀ through P₃
+
+69
+00:04:36,480 --> 00:04:40,500
+We then get these intermediate points, before 
+the final point that we get out of the function
+
+70
+00:04:41,340 --> 00:04:46,560
+This method of, recursively lerping between 
+our points, is called DeCasteljau’s algorithm
+
+71
+00:04:47,820 --> 00:04:50,460
+It’s very popular, and incredibly easy to remember
+
+72
+00:04:50,460 --> 00:04:53,160
+you just lerp until you run out of things to lerp!
+
+73
+00:04:54,120 --> 00:04:58,740
+It’s also very numerically stable, but it can 
+sometimes be a little expensive to calculate
+
+74
+00:04:59,460 --> 00:05:02,820
+Let’s look at the same math, 
+but from a different perspective
+
+75
+00:05:03,600 --> 00:05:07,860
+If we write all these lerps out as a math 
+function, we can shuffle things around,  
+
+76
+00:05:07,860 --> 00:05:10,200
+and express them as a factor of each point!
+
+77
+00:05:11,160 --> 00:05:14,040
+This is called the Bernstein 
+form of Bézier curves.
+
+78
+00:05:14,040 --> 00:05:18,600
+A geometric interpretation of this, is 
+taking the vectors that represent each point,  
+
+79
+00:05:18,600 --> 00:05:23,400
+scaling each of them by their own cubic 
+polynomial, and adding them all up.
+
+80
+00:05:24,120 --> 00:05:28,320
+These polynomials might seem like they 
+came out of nowhere, but this is just  
+
+81
+00:05:28,320 --> 00:05:32,940
+what you get when rearranging the lerp math 
+to be expressed as a factor of each point
+
+82
+00:05:34,380 --> 00:05:38,040
+These polynomials act as 
+influences of each control point
+
+83
+00:05:38,640 --> 00:05:43,800
+So in the beginning, the first point has all 
+influence, this is then slowly shifted over,  
+
+84
+00:05:43,800 --> 00:05:46,080
+until the last point has all the influence
+
+85
+00:05:47,460 --> 00:05:51,000
+This is a special type of weighted 
+sum, called a convex combination,  
+
+86
+00:05:51,720 --> 00:05:55,020
+as these polynomials add 
+up to 1 for all values of t
+
+87
+00:05:56,400 --> 00:06:00,120
+A third interpretation I’d like to 
+show, is particularly interesting,  
+
+88
+00:06:00,120 --> 00:06:02,700
+because it allows us to write more optimized code
+
+89
+00:06:03,660 --> 00:06:09,540
+Instead of writing them as factors of points, what 
+if we rearrange them as factors of powers of t?
+
+90
+00:06:10,200 --> 00:06:15,360
+As you can see, we have a constant 
+factor, t, t squared, t cubed
+
+91
+00:06:15,360 --> 00:06:17,760
+The reason this is computationally efficient,  
+
+92
+00:06:17,760 --> 00:06:21,840
+is that we can cache these coefficients, 
+for each arrangement of the control points.
+
+93
+00:06:22,980 --> 00:06:27,000
+Now, a geometric interpretation of this one is,  
+
+94
+00:06:27,000 --> 00:06:31,620
+a little harder to wrap your head around. 
+It’s, definitely not as intuitive as the others
+
+95
+00:06:32,340 --> 00:06:37,440
+But we can think of it as 4 vectors that 
+are each scaled by specific powers of t.  
+
+96
+00:06:38,340 --> 00:06:42,480
+We have a constant P₀, plus a vector scaled by t,  
+
+97
+00:06:42,480 --> 00:06:47,160
+plus a vector scaled by t squared, 
+plus a vector scaled by t cubed
+
+98
+00:06:50,400 --> 00:06:54,840
+And so, even though all three of these 
+are describing the exact same curve  
+
+99
+00:06:54,840 --> 00:06:59,880
+mathematically, they have different geometric 
+interpretations and performance characteristics
+
+100
+00:07:00,660 --> 00:07:06,240
+There’s one last way we can rearrange this math, 
+that is by far, my favorite - the matrix form
+
+101
+00:07:07,560 --> 00:07:12,120
+One thing I particularly like about it, is 
+that it separates out all the magic numbers,  
+
+102
+00:07:12,120 --> 00:07:16,080
+it lets us see patterns and symmetries 
+that were otherwise hard to spot
+
+103
+00:07:16,920 --> 00:07:20,640
+This is called the characteristic 
+matrix, of the cubic bézier curve
+
+104
+00:07:21,420 --> 00:07:27,060
+Now, this matrix form actually encapsulates both 
+the bernstein and the polynomial interpretation
+
+105
+00:07:27,960 --> 00:07:31,320
+If we multiply the powers of t 
+by the characteristic matrix,  
+
+106
+00:07:31,320 --> 00:07:33,060
+we get the bernstein polynomials
+
+107
+00:07:34,260 --> 00:07:37,260
+If we instead multiply the characteristic matrix  
+
+108
+00:07:37,260 --> 00:07:40,500
+by the point matrix, we get 
+the polynomial coefficients
+
+109
+00:07:42,120 --> 00:07:45,360
+But, a cubic bézier curve doesn’t get us very far.  
+
+110
+00:07:45,360 --> 00:07:48,900
+What if we want to create a 
+longer, more complicated path?
+
+111
+00:07:50,100 --> 00:07:53,940
+Luckily, béziers generalize 
+to any number of points
+
+112
+00:07:53,940 --> 00:07:59,040
+For this set of control points, we are doing 
+the exact same thing as before. Lerp until  
+
+113
+00:07:59,040 --> 00:08:03,360
+there are no more things to lerp, and we’re 
+left with one point, tracing out the path
+
+114
+00:08:04,740 --> 00:08:09,780
+Not that, anyone would call it this, but, 
+technically this would be a dodecic bézier curve
+
+115
+00:08:10,860 --> 00:08:15,000
+Just like the cubic bézier, we can 
+describe the influence of each point,  
+
+116
+00:08:15,000 --> 00:08:17,340
+with its bernstein basis polynomials
+
+117
+00:08:17,880 --> 00:08:20,220
+As you can see, the same principle applies,  
+
+118
+00:08:20,220 --> 00:08:23,460
+it starts out with the first 
+point having full influence,  
+
+119
+00:08:23,460 --> 00:08:28,320
+and then it will ride the waves through the 
+middle, until the last point gets full influence.
+
+120
+00:08:28,920 --> 00:08:33,420
+But, if we want to use this for paths 
+in games, we now have a problem.
+
+121
+00:08:34,380 --> 00:08:38,400
+Let’s say we want to use this path to 
+define a road, from one town to another.
+
+122
+00:08:39,840 --> 00:08:45,420
+If we focus on a single control point - you 
+can see, its influence is, actually across  
+
+123
+00:08:45,420 --> 00:08:51,540
+the entire curve. Which in practice means that if 
+we move this point around, the entire curve will  
+
+124
+00:08:51,540 --> 00:08:56,940
+actually change shape. And this is a huge problem 
+if we want to create precise and intricate shapes,  
+
+125
+00:08:56,940 --> 00:09:00,780
+snaking around mountain ranges, or whatever 
+else might be in the way of our road.
+
+126
+00:09:02,460 --> 00:09:09,180
+In other words, we have no local control. Every 
+movement of every point affects the entire curve
+
+127
+00:09:09,780 --> 00:09:13,140
+In addition, it doesn’t actually 
+pass through most points,  
+
+128
+00:09:13,140 --> 00:09:16,980
+making it very difficult to make a 
+specific paths of the shape you want.
+
+129
+00:09:18,720 --> 00:09:21,420
+And finally, given the sheer 
+number of control points,  
+
+130
+00:09:21,420 --> 00:09:25,140
+it’ll either be numerically unstable 
+or very expensive to calculate.
+
+131
+00:09:25,860 --> 00:09:29,460
+Clearly, higher degree bézier 
+curves are not the answer
+
+132
+00:09:30,180 --> 00:09:32,400
+we need to dive deeper, to find a better way
+
+133
+00:09:32,400 --> 00:09:36,780
+A way to control shapes without affecting 
+every single other point in the curve
+
+134
+00:09:37,800 --> 00:09:41,640
+And perhaps, we left our cubic 
+bézier curve a little too early
+
+135
+00:09:43,800 --> 00:09:46,020
+Maybe, they were just, feeling a little lonely
+
+136
+00:09:46,020 --> 00:09:50,580
+Perhaps they just needed some friends 
+to realize their full potential,  
+
+137
+00:09:51,420 --> 00:09:54,660
+to work as a team and achieve 
+what they couldn’t do on their own
+
+138
+00:09:55,380 --> 00:09:59,280
+And together, they form the bézier spline
+
+139
+00:10:01,260 --> 00:10:02,820
+Instead of having just one segment,  
+
+140
+00:10:02,820 --> 00:10:07,320
+we now have multiple bézier curves 
+joined together, sharing endpoints
+
+141
+00:10:08,280 --> 00:10:11,640
+Traversing this path requires 
+some extra work though
+
+142
+00:10:11,640 --> 00:10:17,580
+The input t-value was traditionally from 0 to 1, 
+acting as a kind of percentage along the curve
+
+143
+00:10:21,720 --> 00:10:25,500
+But in this case, our parameter 
+range has to extend across all curves
+
+144
+00:10:27,240 --> 00:10:31,560
+If you look at the full input range, we can 
+easily map each curve to each whole number
+
+145
+00:10:32,460 --> 00:10:37,080
+So let’s define a u-value, the 
+input parameter for the whole spline
+
+146
+00:10:37,080 --> 00:10:40,920
+The integer part can then 
+represent the curve index
+
+147
+00:10:40,920 --> 00:10:45,420
+and the fractional part, the local 
+t-value for each individual curve
+
+148
+00:10:47,220 --> 00:10:50,220
+And so now, we’ve defined 
+a simple method to create,  
+
+149
+00:10:50,220 --> 00:10:52,980
+shape, and move along a set of cubic bézier curves
+
+150
+00:10:54,480 --> 00:10:57,000
+This is now getting a little more complex,  
+
+151
+00:10:57,000 --> 00:11:01,320
+so let’s make sure we’re on the same page 
+about what all of these elements are called
+
+152
+00:11:01,320 --> 00:11:06,780
+The input u-value, is in a one-dimensional 
+space called parameter space
+
+153
+00:11:08,700 --> 00:11:11,640
+The points we define, are called control points
+
+154
+00:11:11,640 --> 00:11:16,980
+A spline then generates individual 
+curves based on those control points,  
+
+155
+00:11:16,980 --> 00:11:20,640
+where each curve is effectively 
+using its own math function
+
+156
+00:11:21,600 --> 00:11:25,920
+These curves meet end to end 
+at points called joins or knots
+
+157
+00:11:25,920 --> 00:11:30,480
+Note that in this case, the joins 
+happen to also lie on control points
+
+158
+00:11:30,480 --> 00:11:32,220
+but this is not always the case
+
+159
+00:11:33,180 --> 00:11:36,780
+Each curve is then assigned an 
+interval in the input parameter space,
+
+160
+00:11:36,780 --> 00:11:41,040
+that helps us associate any 
+given input u value to a curve
+
+161
+00:11:41,040 --> 00:11:43,560
+The values here are called knot values
+
+162
+00:11:43,560 --> 00:11:46,260
+and the distance between them, knot intervals
+
+163
+00:11:46,920 --> 00:11:49,980
+In this video, we’ll be 
+focusing on uniform splines,
+
+164
+00:11:49,980 --> 00:11:55,380
+where all of our knot intervals have the 
+same length, in this case a length of 1,
+
+165
+00:11:55,380 --> 00:11:59,640
+making it very easy to map each 
+curve to the unit interval of 0 to 1
+
+166
+00:11:59,640 --> 00:12:03,180
+Non-uniform splines, where 
+the knot interval varies,  
+
+167
+00:12:03,180 --> 00:12:07,020
+are significantly more complicated, 
+so let’s save that for a future video
+
+168
+00:12:08,160 --> 00:12:11,760
+Now, we wanted to use this to create 
+a road from one town to another
+
+169
+00:12:11,760 --> 00:12:15,180
+but, we struggled to get it 
+to work with a single curve,  
+
+170
+00:12:15,180 --> 00:12:18,660
+because we didn’t have local 
+control, among other things
+
+171
+00:12:18,660 --> 00:12:21,480
+So, has our spline fixed these problems?
+
+172
+00:12:22,080 --> 00:12:25,620
+Well, if we map the basis 
+functions into our parameter space,
+
+173
+00:12:25,620 --> 00:12:29,460
+we can analyze the weights, to 
+see if we now have local control
+
+174
+00:12:29,460 --> 00:12:32,100
+If you look at the influence 
+of this control point,  
+
+175
+00:12:32,100 --> 00:12:35,160
+it lies entirely within 
+the span of the third curve
+
+176
+00:12:37,200 --> 00:12:40,200
+What this means, is that if 
+we move this control point,
+
+177
+00:12:40,200 --> 00:12:45,300
+only that span will be affected, leaving 
+the rest of the spline completely unchanged
+
+178
+00:12:47,040 --> 00:12:53,040
+If we look at this point, you can see 
+that its influence is twice as large,
+
+179
+00:12:53,040 --> 00:12:55,980
+which makes sense as two curves share this point,  
+
+180
+00:12:56,520 --> 00:13:00,300
+but it still doesn’t span further 
+than those two curve segments,
+
+181
+00:13:00,300 --> 00:13:05,460
+and so we still have local control, again 
+leaving the rest of the spline unchanged
+
+182
+00:13:07,200 --> 00:13:10,980
+So with the cubic bézier spline, 
+we’ve regained local control!
+
+183
+00:13:12,120 --> 00:13:15,240
+Not only that - but because 
+we’re using cubic béziers,
+
+184
+00:13:15,240 --> 00:13:18,480
+it doesn’t actually get any more 
+expensive by adding more points
+
+185
+00:13:20,220 --> 00:13:23,220
+We’re effectively just sampling one cubic bézier,  
+
+186
+00:13:23,220 --> 00:13:26,040
+even though the path is 
+much longer and more complex
+
+187
+00:13:37,800 --> 00:13:41,040
+So compared to the higher-degree 
+bézier curve, it’s cheap!
+
+188
+00:13:42,300 --> 00:13:45,300
+Finally - if we look back at our 
+original set of control points,  
+
+189
+00:13:45,300 --> 00:13:47,640
+we don’t just pass through 
+the start and the end anymore
+
+190
+00:13:47,640 --> 00:13:50,280
+We now pass through every third point,  
+
+191
+00:13:50,280 --> 00:13:54,120
+which means its significantly easier 
+to create whatever shape you want
+
+192
+00:13:57,540 --> 00:14:00,660
+In other words, it’s now 
+interpolating every third point
+
+193
+00:14:04,080 --> 00:14:08,760
+It’s, really no wonder why the cubic 
+bézier spline has become so loved
+
+194
+00:14:08,760 --> 00:14:10,740
+It really gives you a huge amount of control
+
+195
+00:14:10,740 --> 00:14:15,420
+You can make, pretty accurate circles 
+with it (though not actual circles)
+
+196
+00:14:15,420 --> 00:14:18,060
+You can be a little cheeky 
+and place the middle two  
+
+197
+00:14:18,060 --> 00:14:20,880
+points exactly thirdway to make linear segments
+
+198
+00:14:21,780 --> 00:14:24,360
+It’s the spline used when doing vector graphics,  
+
+199
+00:14:24,360 --> 00:14:27,840
+especially in font rendering, 
+or Photoshop’s pen tool
+
+200
+00:14:28,620 --> 00:14:33,600
+The key to the undeniable flexibility of 
+the bézier spline, lies in the arrangement  
+
+201
+00:14:33,600 --> 00:14:38,880
+of the two control points next to the curve 
+joins, sometimes called the tangent points
+
+202
+00:14:38,880 --> 00:14:42,900
+They have three common configurations, 
+all with different properties
+
+203
+00:14:42,900 --> 00:14:49,620
+One is the split tangents, that you can use to 
+make sharp corners, also known as broken tangents
+
+204
+00:14:50,400 --> 00:14:53,700
+The second one is where you align the 
+three points around the curve join
+
+205
+00:14:53,700 --> 00:14:57,420
+This ensures the two curves are 
+tangent with each other at that join
+
+206
+00:14:58,320 --> 00:15:01,740
+Finally, you can also mirror the 
+tangent points around the join,
+
+207
+00:15:01,740 --> 00:15:06,300
+making them not only aligned, but also the 
+same distance from their shared control point
+
+208
+00:15:07,920 --> 00:15:13,620
+With all these tools in mind, we can now easily 
+create paths, and animate objects on it, right?
+
+209
+00:15:16,680 --> 00:15:23,160
+Although, something seems wrong. Look at how they 
+move across the curve joins, especially this one.
+
+210
+00:15:23,820 --> 00:15:26,580
+It seems to suddenly change velocity.
+
+211
+00:15:28,080 --> 00:15:32,160
+And so this, is where we need to talk 
+about a concept, called Continuity
+
+212
+00:15:34,680 --> 00:15:37,980
+Continuity is a measure of 
+how “connected” the curves are
+
+213
+00:15:37,980 --> 00:15:40,980
+As you can see, these curves are connected!
+
+214
+00:15:40,980 --> 00:15:44,280
+The curves meet at the joins, 
+and so we can give this a name
+
+215
+00:15:44,280 --> 00:15:47,580
+This spline is C⁰ continuous
+
+216
+00:15:48,540 --> 00:15:51,960
+If we separate these curves, 
+it’s no longer continuous at all,  
+
+217
+00:15:51,960 --> 00:15:54,420
+and so it’s no longer C⁰ continuous either
+
+218
+00:15:55,440 --> 00:15:59,880
+So what continuity means is that 
+position changes continuously,  
+
+219
+00:15:59,880 --> 00:16:03,660
+there’s no sudden jump, or 
+discontinuity, in this path
+
+220
+00:16:04,440 --> 00:16:08,580
+But, we noticed something was wrong with 
+the way our cubes were moving across joins
+
+221
+00:16:08,580 --> 00:16:11,580
+They appeared to make little “jumps” in speed
+
+222
+00:16:12,720 --> 00:16:16,500
+And any time you want to analyze change, 
+it’s worth looking into derivatives
+
+223
+00:16:17,820 --> 00:16:20,520
+Remember the matrix form of the cubic bézier?
+
+224
+00:16:21,120 --> 00:16:26,100
+One very nice feature of this form, is that 
+calculating the derivative is trivially easy
+
+225
+00:16:26,100 --> 00:16:30,960
+All we need to do is to differentiate the 
+powers-of-t matrix, using the power rule
+
+226
+00:16:32,100 --> 00:16:36,960
+Now, this might seem a little abstract, what 
+is the derivative of a curve in 2D space?
+
+227
+00:16:36,960 --> 00:16:42,780
+Well, a more common name for the first derivative 
+of position with respect to time, is, velocity!
+
+228
+00:16:43,560 --> 00:16:45,900
+The second derivative is called acceleration
+
+229
+00:16:45,900 --> 00:16:49,020
+The third derivative is 
+called the lesser known, jolt
+
+230
+00:16:49,740 --> 00:16:54,420
+Now that we know how to calculate the 
+velocity, let’s see how it behaves in this path
+
+231
+00:17:00,060 --> 00:17:04,980
+Did you notice how it “jumps” at every join?
+
+232
+00:17:04,980 --> 00:17:07,440
+The length changes, in other words
+
+233
+00:17:07,440 --> 00:17:09,840
+There’s a discontinuity in speed
+
+234
+00:17:11,160 --> 00:17:14,579
+We can make this even more explicit 
+by drawing the graph of the velocity
+
+235
+00:17:14,579 --> 00:17:16,979
+Notice what happens at every join
+
+236
+00:17:25,160 --> 00:17:26,160
+The  
+
+237
+00:17:26,160 --> 00:17:31,320
+velocity graph is discontinuous!
+
+238
+00:17:31,320 --> 00:17:37,260
+It’s disconnected at every join
+
+239
+00:17:37,260 --> 00:17:41,760
+So even though we aligned our tangents, 
+there’s a sudden change in speed
+
+240
+00:17:43,140 --> 00:17:46,320
+Now watch what happens to the 
+velocity graph if we make these  
+
+241
+00:17:46,320 --> 00:17:48,960
+tangent points mirrored, instead of just aligned
+
+242
+00:18:07,500 --> 00:18:12,480
+The velocity around the curve is now continuous!
+
+243
+00:18:12,480 --> 00:18:14,700
+There’s no sudden jump anywhere anymore
+
+244
+00:18:15,600 --> 00:18:19,500
+This curve is now, C¹ continuous, 
+because both its position,  
+
+245
+00:18:19,500 --> 00:18:22,800
+and it’s first derivative, velocity, is continuous
+
+246
+00:18:24,120 --> 00:18:29,340
+Now, for continuity to be valid, all previous 
+derivatives have to be continuous too
+
+247
+00:18:29,340 --> 00:18:33,600
+Every C¹ continuous path is also C⁰ continuous
+
+248
+00:18:34,320 --> 00:18:39,720
+If we disconnect these curves in position, 
+it’s neither C⁰ or C¹ continuous anymore,
+
+249
+00:18:39,720 --> 00:18:43,380
+even though the velocity is 
+still continuous in and of itself
+
+250
+00:18:43,980 --> 00:18:49,080
+The discontinuity in position prevents it from 
+being classified under any continuity class
+
+251
+00:18:49,080 --> 00:18:54,780
+But why does mirroring the tangent 
+points make it C¹ continuous?
+
+252
+00:18:55,560 --> 00:18:58,260
+This is where looking at the algebra is helpful
+
+253
+00:18:59,160 --> 00:19:01,020
+First, let’s label our points.
+
+254
+00:19:01,800 --> 00:19:04,260
+Now, C⁰ continuity is trivial
+
+255
+00:19:04,260 --> 00:19:09,120
+these two curves share the 
+point P₃ so that’s already done.
+
+256
+00:19:09,120 --> 00:19:13,080
+C¹ continuity seems to happen when 
+the tangent points are mirrored
+
+257
+00:19:13,080 --> 00:19:17,220
+Notice how when we move them, the 
+velocity becomes discontinuous
+
+258
+00:19:17,220 --> 00:19:21,420
+So, to write this algebraically, this 
+is the condition that has to be met
+
+259
+00:19:22,200 --> 00:19:28,140
+The velocity at the end of curve A, where 
+the input t-value is 1, has to be equal to
+
+260
+00:19:28,140 --> 00:19:32,040
+the velocity at the start of curve 
+B, where the input t-value is 0
+
+261
+00:19:32,040 --> 00:19:36,600
+You can plug in the equation here for 
+the bézier curve, and solve for P₄
+
+262
+00:19:37,620 --> 00:19:41,340
+I’ll spare you all the algebra, 
+but, this is what you end up with
+
+263
+00:19:41,340 --> 00:19:42,720
+which is what we would expect!
+
+264
+00:19:42,720 --> 00:19:47,520
+P₄ is now equal to P₂ reflected around P₃
+
+265
+00:19:47,520 --> 00:19:49,560
+In other words, it’s mirrored
+
+266
+00:19:50,400 --> 00:19:54,780
+Now, I’ve made P₄ grayed out, 
+as we’ve actually lost a little  
+
+267
+00:19:54,780 --> 00:19:58,200
+bit of control now if we want 
+this join to have C¹ continuity
+
+268
+00:19:58,200 --> 00:20:02,580
+because P₄ is now fully determined by P₂ and P₃
+
+269
+00:20:02,580 --> 00:20:05,760
+but, it’s a little sacrifice we’re willing to make
+
+270
+00:20:05,760 --> 00:20:10,380
+Notice how the velocity stays 
+continuous no matter where we move P₂
+
+271
+00:20:11,340 --> 00:20:15,840
+One would hope that C¹ continuity could 
+fix all of our issues with animation
+
+272
+00:20:15,840 --> 00:20:20,100
+we’ve clearly improved it by 
+removing that velocity discontinuity
+
+273
+00:20:20,100 --> 00:20:22,860
+but there’s still a more subtle thing going on
+
+274
+00:20:23,460 --> 00:20:24,840
+Let’s take a closer look
+
+275
+00:20:29,160 --> 00:20:33,240
+Can you see how the boxes suddenly and harshly 
+starts turning in the other direction here?
+
+276
+00:20:34,380 --> 00:20:38,280
+The only way for something to change 
+direction, is through acceleration
+
+277
+00:20:38,280 --> 00:20:42,000
+so let’s investigate how it 
+changes across this spline
+
+278
+00:20:47,220 --> 00:20:49,800
+We can already see that we 
+have another discontinuity
+
+279
+00:20:49,800 --> 00:20:52,080
+it makes a huge jump at the join
+
+280
+00:20:52,740 --> 00:20:55,260
+As you can see in the graph, it’s discontinuous
+
+281
+00:20:55,800 --> 00:21:00,300
+So, again, let’s write our acceleration 
+continuity constraint explicitly
+
+282
+00:21:00,300 --> 00:21:05,100
+For C² continuity, the acceleration 
+at the end of curve A, has to equal  
+
+283
+00:21:05,100 --> 00:21:07,200
+the acceleration at the start of curve B
+
+284
+00:21:08,040 --> 00:21:11,280
+Skipping all the intermediate 
+steps, this is what we end up with!
+
+285
+00:21:13,080 --> 00:21:19,140
+Geometrically, we can interpret this as, P₅ 
+should be placed at the vector from P₂ to P₃
+
+286
+00:21:19,140 --> 00:21:21,060
+originating from P₁
+
+287
+00:21:21,060 --> 00:21:22,980
+multiplied by 4
+
+288
+00:21:24,660 --> 00:21:28,680
+P₅ is now fully constrained by P₁ P₂ and P₃
+
+289
+00:21:29,460 --> 00:21:33,900
+If you’re familiar with constraints, 
+you might have already spotted a problem
+
+290
+00:21:33,900 --> 00:21:35,700
+But, this works!
+
+291
+00:21:35,700 --> 00:21:38,640
+If we change the shape of the 
+first curve, the position,  
+
+292
+00:21:38,640 --> 00:21:45,180
+velocity and acceleration are all continuous, so 
+we successfully joined béziers with C² continuity
+
+293
+00:21:46,380 --> 00:21:47,880
+or, did we?
+
+294
+00:21:49,320 --> 00:21:51,960
+Something very bad is about to happen
+
+295
+00:21:52,620 --> 00:21:53,580
+Here’s what’s up:
+
+296
+00:21:53,580 --> 00:21:57,660
+We’ve been talking about ensuring 
+continuity around the join at P₃
+
+297
+00:21:58,860 --> 00:22:02,100
+But in order for us to make 
+the entire spline C² continuous
+
+298
+00:22:02,100 --> 00:22:06,240
+we need to also apply these continuity 
+constraints around the other joins
+
+299
+00:22:07,320 --> 00:22:11,820
+P5 will now determine the position of P₇ 
+because again, mirrored tangents for C¹
+
+300
+00:22:11,820 --> 00:22:13,560
+The same applies to P₁₀
+
+301
+00:22:15,360 --> 00:22:21,900
+For C² continuity, P₄ P₅ and P₆ 
+now control the position of P₈
+
+302
+00:22:24,120 --> 00:22:29,640
+And P₈ P₉ and P₇ controls the position of P₁₁
+
+303
+00:22:32,820 --> 00:22:36,360
+We… don’t seem to have a 
+lot left to control, do we?
+
+304
+00:22:37,200 --> 00:22:42,120
+Now watch what happens if we move a 
+single point, even just a tiny bit
+
+305
+00:22:48,480 --> 00:22:53,700
+As you can see, it yeets off to fucking wherever, 
+making it absolutely useless as a spline
+
+306
+00:22:56,400 --> 00:22:58,260
+But!! it’s very very smooth!
+
+307
+00:22:58,260 --> 00:23:00,180
+Look at how smooth this movement is!
+
+308
+00:23:01,920 --> 00:23:05,400
+At least personally, as someone who has 
+been staring at these things for a year
+
+309
+00:23:05,400 --> 00:23:09,480
+there’s something mesmerizing about C² continuity
+
+310
+00:23:15,480 --> 00:23:16,860
+Let’s also look at the acceleration
+
+311
+00:23:19,140 --> 00:23:22,740
+Now this actually has grave 
+implications for cubic béziers
+
+312
+00:23:23,880 --> 00:23:27,240
+You can’t make a cubic bézier C² continuous,  
+
+313
+00:23:27,960 --> 00:23:31,320
+it is, literally impossible, 
+without losing local control
+
+314
+00:23:31,320 --> 00:23:36,300
+And, having that control is the whole 
+point of using splines in the first place!
+
+315
+00:23:36,300 --> 00:23:40,260
+Our beloved cubic bézier has betrayed us :(
+
+316
+00:23:40,260 --> 00:23:42,420
+it was so useful for creating shapes,  
+
+317
+00:23:42,420 --> 00:23:45,300
+but now we’ve discovered this 
+huge flaw in its construction
+
+318
+00:23:46,500 --> 00:23:50,100
+But, because we’re all curious 
+cats, we have to ask ourselves,  
+
+319
+00:23:50,100 --> 00:23:53,040
+what happens if we go to C³ continuity?
+
+320
+00:23:53,040 --> 00:23:57,120
+And so, same thing here, the third 
+derivative at the end of curve A
+
+321
+00:23:57,120 --> 00:23:59,940
+has to match the third derivative 
+at the start of curve B
+
+322
+00:23:59,940 --> 00:24:03,540
+This is now getting significantly more messy
+
+323
+00:24:03,540 --> 00:24:08,460
+The geometric interpretation is 
+almost useless at this point but
+
+324
+00:24:08,460 --> 00:24:10,980
+we’re basically taking the vector from P₀ to P₃
+
+325
+00:24:10,980 --> 00:24:11,940
+adding it to P₃
+
+326
+00:24:11,940 --> 00:24:15,180
+then we take the vector from 
+P₂ to P₃ and from P₂ to P₁
+
+327
+00:24:15,180 --> 00:24:16,440
+add those two together
+
+328
+00:24:16,440 --> 00:24:17,940
+add it to the first vector
+
+329
+00:24:17,940 --> 00:24:20,280
+and multiply it [deep breath]
+
+330
+00:24:20,280 --> 00:24:20,760
+by 6
+
+331
+00:24:20,760 --> 00:24:27,120
+Long story short, the position of P₆ 
+is now determined by P₀ P₁ P₂ and P₃
+
+332
+00:24:28,740 --> 00:24:32,700
+Our problem of losing local control 
+has now reached its worst case
+
+333
+00:24:32,700 --> 00:24:38,280
+We don’t have control over P₉ 
+anymore, and the same goes for P₁₂ 😔
+
+334
+00:24:38,280 --> 00:24:41,340
+The curve is now even more 
+sensitive to the initial conditions
+
+335
+00:24:41,340 --> 00:24:45,000
+a tiny movement of a control 
+point in the first curve,  
+
+336
+00:24:45,000 --> 00:24:47,700
+will massively throw the rest of the spline around
+
+337
+00:24:49,680 --> 00:24:54,960
+In fact, we’ve lost so much control, that 
+this can’t even be called a spline anymore
+
+338
+00:24:54,960 --> 00:24:59,220
+it’s actually equivalent to simply 
+extrapolating the first curve,  
+
+339
+00:24:59,220 --> 00:25:02,160
+by increasing our t-value beyond 1
+
+340
+00:25:03,060 --> 00:25:08,160
+And since this is now just, one 
+curve, not only is it C³ continuous
+
+341
+00:25:08,160 --> 00:25:13,740
+it’s actually C∞ because there are no joins 
+anymore, all derivatives are connected
+
+342
+00:25:17,280 --> 00:25:25,200
+To summarize - in a cubic bézier, when the 
+tangent points are mirrored, we have C¹ continuity
+
+343
+00:25:25,860 --> 00:25:31,080
+When we have a broken join, the velocity is no 
+longer continuous, so it’s only C⁰ continuous
+
+344
+00:25:31,080 --> 00:25:36,420
+When the curve is entirely disconnected, 
+there’s no continuity at all
+
+345
+00:25:36,960 --> 00:25:38,400
+An important thing to remember,  
+
+346
+00:25:38,400 --> 00:25:42,600
+what we’ve been focusing on is the 
+continuity at the join between curves
+
+347
+00:25:42,600 --> 00:25:47,820
+because every other point on the curve, 
+is C∞, as they use the same function
+
+348
+00:25:48,900 --> 00:25:52,860
+For a more formal definition, two functions A,  
+
+349
+00:25:52,860 --> 00:25:59,220
+and B, are Cⁿ continuous, if the 0ᵗʰ through 
+the nᵗʰ derivative are all equal at the join
+
+350
+00:26:00,660 --> 00:26:03,240
+This, is called, Parametric Continuity
+
+351
+00:26:04,140 --> 00:26:07,920
+Continuity is absolutely central 
+to the discussion of splines,
+
+352
+00:26:07,920 --> 00:26:12,720
+and it’s actually the primary motivator for 
+investigating multiple different types of splines
+
+353
+00:26:12,720 --> 00:26:15,480
+But, we’re not quite done yet with continuity,  
+
+354
+00:26:15,480 --> 00:26:19,020
+because there’s a different type of 
+continuity lurking in the shadows
+
+355
+00:26:21,120 --> 00:26:25,140
+So we now know, mirrored 
+tangent points are C¹, alright
+
+356
+00:26:25,140 --> 00:26:27,360
+broken tangent points are C⁰
+
+357
+00:26:27,360 --> 00:26:30,780
+but, what about aligned tangent points?
+
+358
+00:26:31,440 --> 00:26:35,160
+Clearly, there’s some kind of 
+continuity we care about here
+
+359
+00:26:35,160 --> 00:26:37,260
+Even if it has a sudden speed change
+
+360
+00:26:38,040 --> 00:26:42,540
+If we’re using these for vector graphics, 
+we don’t really care about “speed”
+
+361
+00:26:42,540 --> 00:26:45,480
+we only care about the shape it creates in the end
+
+362
+00:26:45,480 --> 00:26:49,440
+This is exactly what Geometric 
+Continuity is all about
+
+363
+00:26:51,780 --> 00:26:55,920
+When we look at the velocity, sure, it 
+might have this sudden jump in length,  
+
+364
+00:26:55,920 --> 00:26:58,620
+which, in this case is a change in speed
+
+365
+00:26:58,620 --> 00:27:01,020
+but again, what if we don’t care about speed?
+
+366
+00:27:01,020 --> 00:27:03,240
+What if we only care about the shape?
+
+367
+00:27:04,500 --> 00:27:09,420
+To analyze this, we can get the tangent vector 
+by simply normalizing the velocity vector
+
+368
+00:27:09,420 --> 00:27:12,240
+in other words, forcing it to have a length of 1
+
+369
+00:27:13,260 --> 00:27:15,180
+Let’s also throw in the normal vector
+
+370
+00:27:15,180 --> 00:27:19,440
+because it’s trivial to calculate in 2D, and 
+it helps us visualize this a little better
+
+371
+00:27:24,960 --> 00:27:28,440
+Now, this is, perfectly continuous, right?
+
+372
+00:27:28,440 --> 00:27:32,760
+the change in speed has literally 
+no effect on our tangent and normal
+
+373
+00:27:34,020 --> 00:27:38,400
+This is called Tangent Continuity, 
+and we’re going to call this G¹
+
+374
+00:27:39,300 --> 00:27:42,300
+At this point, you probably 
+know where this is going right?
+
+375
+00:27:42,300 --> 00:27:46,380
+That 1 next to the G is practically 
+begging us to investigate
+
+376
+00:27:46,380 --> 00:27:47,820
+what is G²?
+
+377
+00:27:47,820 --> 00:27:51,060
+This is not just a mathematical curiosity,  
+
+378
+00:27:51,060 --> 00:27:54,780
+G² continuity is actually 
+crucial in industrial design
+
+379
+00:27:54,780 --> 00:27:58,560
+especially for shiny things 
+like car bodies or phones
+
+380
+00:27:58,560 --> 00:28:02,760
+and perhaps a little sneakily, 
+the shape of the apple app icon
+
+381
+00:28:03,840 --> 00:28:05,400
+In order for us to analyze this,  
+
+382
+00:28:05,400 --> 00:28:08,760
+we’re gonna have to enter the third 
+dimension, and turn on the lights
+
+383
+00:28:11,940 --> 00:28:17,640
+What we’ve got here, is a perfectly reflective 
+surface, which will help us analyze the geometry
+
+384
+00:28:18,600 --> 00:28:22,740
+If we look closely, we can see 
+that, something is, wrong here
+
+385
+00:28:24,600 --> 00:28:27,180
+Our tangents are perfectly aligned
+
+386
+00:28:27,180 --> 00:28:30,120
+and yet, somehow, there’s 
+a seam in our reflection!
+
+387
+00:28:30,120 --> 00:28:32,940
+Isn’t it enough to just, align the tangents?
+
+388
+00:28:34,500 --> 00:28:35,760
+Clearly, it’s not
+
+389
+00:28:35,760 --> 00:28:38,400
+And if we change the background to these dots,  
+
+390
+00:28:38,400 --> 00:28:41,640
+it’s made even more clear 
+just how discontinuous this is
+
+391
+00:28:51,660 --> 00:28:56,040
+This doesn’t just apply to bézier curves
+
+392
+00:28:56,040 --> 00:28:59,220
+A perhaps unexpected place 
+where this problem occurs
+
+393
+00:28:59,220 --> 00:29:02,580
+is when you join circular arcs to flat segments
+
+394
+00:29:03,180 --> 00:29:07,320
+Here too, we see this extremely 
+sharp discontinuity at the seam
+
+395
+00:29:10,380 --> 00:29:16,440
+And again, the dots will 
+make an even stronger case
+
+396
+00:29:17,220 --> 00:29:22,680
+And there’s no trick  
+
+397
+00:29:22,680 --> 00:29:26,760
+here! These are perfect, circular arcs
+
+398
+00:29:30,120 --> 00:29:33,240
+But they too, only join with G¹ continuity
+
+399
+00:29:33,240 --> 00:29:38,760
+which might be a little unexpected, since we 
+often think of circles as this ideal smooth shape
+
+400
+00:29:39,480 --> 00:29:40,800
+So what is going on here?
+
+401
+00:29:40,800 --> 00:29:45,900
+First, let’s look at the tangent directions
+
+402
+00:29:46,860 --> 00:29:51,000
+Now, they have quite a bit of overlap, so, 
+for clarity let’s use the normals instead
+
+403
+00:29:52,200 --> 00:29:55,620
+Now watch how they change as 
+we move them across this path
+
+404
+00:29:57,780 --> 00:30:01,920
+You might notice they suddenly start 
+and stop rotating at the joins,  
+
+405
+00:30:01,920 --> 00:30:05,040
+right where the circular 
+arcs meet the flat segment
+
+406
+00:30:09,720 --> 00:30:14,220
+The angle of the tangent vector can 
+illuminate this problem even more clearly
+
+407
+00:30:14,880 --> 00:30:17,340
+Notice how the angle is 
+changing at a constant rate,  
+
+408
+00:30:17,340 --> 00:30:21,840
+then comes to a complete stop, and then 
+it suddenly and immediately starts again.
+
+409
+00:30:22,860 --> 00:30:26,580
+In fact, this is inherent to the nature of circles
+
+410
+00:30:26,580 --> 00:30:31,320
+Circles are the special case where the 
+angle is changing at a constant rate
+
+411
+00:30:31,980 --> 00:30:35,940
+and flat lines is the special case 
+where the angle doesn’t change at all
+
+412
+00:30:37,140 --> 00:30:41,640
+So how do we even begin to analyze this, 
+to find out more about G² continuity?
+
+413
+00:30:42,360 --> 00:30:46,800
+We need a parameter-independent, or, 
+speed-independent way to measure this
+
+414
+00:30:47,400 --> 00:30:49,740
+This, is where we need to talk about curvature
+
+415
+00:30:51,000 --> 00:30:56,280
+Given a point on a curve, there’s a circle 
+that describes the curvature at that point
+
+416
+00:30:57,240 --> 00:30:59,400
+This is called the osculating circle
+
+417
+00:30:59,400 --> 00:31:04,560
+You can think of it as, the circle that has 
+the same curvature as the curve, at that point
+
+418
+00:31:14,940 --> 00:31:19,020
+The radius of this circle, is 
+1 divided by the curvature!
+
+419
+00:31:19,740 --> 00:31:23,400
+Curvature can be calculated using 
+the determinant between the velocity  
+
+420
+00:31:23,400 --> 00:31:26,460
+and the acceleration, divided by the speed cubed
+
+421
+00:31:27,840 --> 00:31:30,780
+The determinant up there 
+is a little confusing, but,  
+
+422
+00:31:30,780 --> 00:31:34,200
+it’s equivalent to what is commonly 
+known as the “2D cross product”
+
+423
+00:31:34,200 --> 00:31:36,420
+or the perpendicular dot product
+
+424
+00:31:36,420 --> 00:31:40,680
+or, more accurately, it’s the 
+wedge product returning a bivector
+
+425
+00:31:40,680 --> 00:31:42,900
+but, that’s a topic for another day
+
+426
+00:31:44,520 --> 00:31:47,460
+So what does the curvature 
+look like across this spline?
+
+427
+00:31:47,460 --> 00:31:49,500
+Let’s travel along and see
+
+428
+00:31:56,280 --> 00:32:04,380
+There are a few interesting 
+observations we can make
+
+429
+00:32:04,380 --> 00:32:08,640
+The first is that, even though 
+a point is only C⁰ continuous
+
+430
+00:32:08,640 --> 00:32:12,360
+it’s possible to make the 
+curvature continuous at that point
+
+431
+00:32:13,500 --> 00:32:19,260
+The second is that, even if a join is C¹, that 
+doesn’t guarantee us curvature continuity either
+
+432
+00:32:19,260 --> 00:32:23,580
+And of course, it’s especially bad in the 
+middle, where there’s a huge jump in curvature
+
+433
+00:32:24,540 --> 00:32:31,740
+A very popular way to analyze curvature, is 
+using this handy tool, known as a curvature comb
+
+434
+00:32:33,300 --> 00:32:36,720
+Let’s again focus on a single 
+join, between curve A and B
+
+435
+00:32:38,280 --> 00:32:43,080
+The curvature comb grows larger, 
+the tighter the curve turns
+
+436
+00:32:43,080 --> 00:32:46,320
+and the more flat the curve 
+is, curvature approaches 0
+
+437
+00:32:48,960 --> 00:32:54,180
+Now, we know that in order for us to have G¹ 
+continuity, we have to align the tangent points
+
+438
+00:32:54,900 --> 00:32:59,220
+In mathematical terms, this means 
+P4, has to be a vector starting  
+
+439
+00:32:59,220 --> 00:33:04,740
+from P₃ in the same direction as 
+P₂ to P₃ scaled by some value!
+
+440
+00:33:06,540 --> 00:33:08,700
+This means we have one degree of freedom,
+
+441
+00:33:08,700 --> 00:33:11,940
+because this variable β₁ can be any positive value
+
+442
+00:33:12,660 --> 00:33:16,740
+If it’s 1, the tangents are mirrored, 
+while any other value scales it
+
+443
+00:33:19,740 --> 00:33:26,360
+You might notice that the curvature comb isn’t 
+lining up - so this is still only G¹ continuous
+
+444
+00:33:26,360 --> 00:33:30,180
+Now, deriving the math for this next step is,  
+
+445
+00:33:30,180 --> 00:33:34,320
+significantly more complicated than 
+for the parametric continuity, but
+
+446
+00:33:34,320 --> 00:33:40,680
+long story short, we now constrain P₅, but we also 
+end up with another degree of freedom, called β₂
+
+447
+00:33:41,640 --> 00:33:45,960
+Now watch what happens to the curvature 
+comb as we apply this constraint
+
+448
+00:33:47,280 --> 00:33:48,300
+It’s aligned!
+
+449
+00:33:49,560 --> 00:33:52,560
+And we actually have two degrees 
+of freedom to control this shape
+
+450
+00:33:53,280 --> 00:34:00,000
+No matter what values we set β₁ or β₂ to, 
+we’ve successfully made this join G² continuous
+
+451
+00:34:03,120 --> 00:34:07,560
+And of course, we can also move the control 
+points, and the constraint still holds
+
+452
+00:34:08,159 --> 00:34:11,999
+Now, the problem is again that, even though 
+we have a few more degrees of freedom,
+
+453
+00:34:12,000 --> 00:34:16,380
+we have the same cascading problem of 
+losing control over the entire spline
+
+454
+00:34:18,540 --> 00:34:21,840
+But, did it solve our problem 
+with shiny reflections?
+
+455
+00:34:22,860 --> 00:34:24,720
+well, yeah, looks like does!
+
+456
+00:34:25,679 --> 00:34:29,639
+It wasn’t enough to have a continuous 
+tangent direction across this join,  
+
+457
+00:34:29,639 --> 00:34:34,019
+we also needed curvature continuity to 
+get rid of the seam in the reflection
+
+458
+00:34:34,020 --> 00:34:37,080
+It will even pass the harder, dot pattern test
+
+459
+00:34:39,480 --> 00:34:43,860
+This is why G² continuity is very 
+important in industrial design
+
+460
+00:34:43,860 --> 00:34:48,180
+as anything shiny will respond very 
+strongly to the shape of the curves
+
+461
+00:34:57,300 --> 00:35:00,060
+G¹ is when tangents are continuous
+
+462
+00:35:00,060 --> 00:35:04,080
+The curvature comb will also be aligned 
+with itself across the normal of the curve
+
+463
+00:35:04,860 --> 00:35:07,380
+G² is when curvature is continuous
+
+464
+00:35:07,380 --> 00:35:12,540
+The curvature comb is now continuous in 
+and of itself, as you can see, it connects
+
+465
+00:35:12,540 --> 00:35:17,700
+Surfaces that are G² or higher, are 
+sometimes called Class-A surfaces
+
+466
+00:35:17,700 --> 00:35:21,480
+G³ is when the rate of change 
+of curvature is continuous
+
+467
+00:35:21,480 --> 00:35:26,220
+The curvature comb will be, in 
+and of itself, tangent continuous
+
+468
+00:35:26,220 --> 00:35:31,020
+Usually, you don’t go higher than G³, as 
+you get very diminishing returns in outcome,  
+
+469
+00:35:31,020 --> 00:35:34,860
+and the math becomes significantly 
+more unwieldy for each step
+
+470
+00:35:36,420 --> 00:35:39,300
+So this, is called Geometric Continuity
+
+471
+00:35:40,080 --> 00:35:45,060
+A more formal definition of geometric continuity 
+is actually pretty tricky to come up with
+
+472
+00:35:46,140 --> 00:35:50,400
+but one that I like, is that 
+if you have two curves A and B
+
+473
+00:35:50,400 --> 00:36:00,120
+they are Gⁿ continuous, if a function g(t) 
+exists, so that A(t) and B(g(t)) are Cⁿ continuous
+
+474
+00:36:01,020 --> 00:36:03,240
+It’s kinda hard to wrap your head around, but,
+
+475
+00:36:03,240 --> 00:36:05,880
+it basically means that if 
+we have full control over the  
+
+476
+00:36:05,880 --> 00:36:09,420
+parameter/speed at which we change 
+the t-value of one of the curves,
+
+477
+00:36:10,200 --> 00:36:16,980
+if it’s possible to make them line up into Cⁿ 
+continuity, the original curves are Gⁿ continuous
+
+478
+00:36:18,240 --> 00:36:23,040
+It might seem like a lot to take in, but I 
+can’t stress enough just how important this is,  
+
+479
+00:36:23,880 --> 00:36:27,900
+continuity is what justifies the 
+existence of a whole host of splines
+
+480
+00:36:28,860 --> 00:36:30,720
+Let’s summarize it all
+
+481
+00:36:30,720 --> 00:36:35,220
+C⁰ and G⁰ are equivalent, and they 
+are both positional continuity
+
+482
+00:36:35,760 --> 00:36:38,520
+It basically means your curves 
+are simply connected in position
+
+483
+00:36:39,360 --> 00:36:41,400
+C¹ is velocity continuity
+
+484
+00:36:41,400 --> 00:36:46,080
+as in, the first derivative is continuous, 
+and, the position is also continuous
+
+485
+00:36:46,080 --> 00:36:50,040
+In other words, it’s not enough for the 
+velocity to be continuous on its own
+
+486
+00:36:50,040 --> 00:36:52,920
+the previous derivatives 
+have to be continuous as well
+
+487
+00:36:53,820 --> 00:36:58,380
+G¹ is tangent continuity, which also 
+requires that it has positional continuity
+
+488
+00:36:58,380 --> 00:37:00,720
+And, this same pattern continues
+
+489
+00:37:01,320 --> 00:37:05,220
+C² is acceleration continuity, which 
+also implies velocity continuity,  
+
+490
+00:37:05,220 --> 00:37:08,640
+which also implies positional 
+continuity. You get the idea
+
+491
+00:37:08,640 --> 00:37:10,380
+C³ is jolt continuity
+
+492
+00:37:10,380 --> 00:37:14,520
+G² is curvature continuity, which 
+again, implies the previous ones
+
+493
+00:37:14,520 --> 00:37:20,160
+Finally, we have G³, which, in my opinion, 
+is incorrectly called “torsion” continuity,  
+
+494
+00:37:20,700 --> 00:37:23,700
+it’s also sometimes incorrectly 
+called acceleration continuity
+
+495
+00:37:23,700 --> 00:37:26,220
+I don’t know of a good name 
+for this unfortunately,  
+
+496
+00:37:26,220 --> 00:37:29,940
+but it’s effectively referring to 
+the rate of change of curvature
+
+497
+00:37:29,940 --> 00:37:34,740
+And so on! We can go on forever, until C∞ and G∞
+
+498
+00:37:36,960 --> 00:37:41,580
+Now, just like all the parametric 
+continuities include all previous levels,
+
+499
+00:37:41,580 --> 00:37:45,120
+and geometric continuity includes 
+all their previous levels,
+
+500
+00:37:45,120 --> 00:37:46,680
+there’s another connection here
+
+501
+00:37:47,280 --> 00:37:51,120
+C¹ continuity is also necessarily G¹ continuous
+
+502
+00:37:51,120 --> 00:37:54,720
+If you remember, mirrored 
+tangent points are also aligned
+
+503
+00:37:55,320 --> 00:37:58,920
+Effectively, G-continuity is 
+less strict than C-continuity
+
+504
+00:37:58,920 --> 00:38:04,260
+so the C continuities actually imply their 
+corresponding geometric continuity as well,  
+
+505
+00:38:04,260 --> 00:38:05,940
+but, not the other way around
+
+506
+00:38:05,940 --> 00:38:07,320
+…generally
+
+507
+00:38:08,100 --> 00:38:12,720
+before someone comments going “well 
+actually”, I have to throw in a little caveat.
+
+508
+00:38:12,720 --> 00:38:16,380
+This implication only applies 
+if the curves are regular
+
+509
+00:38:18,000 --> 00:38:23,280
+Now this is a bit of a, math moment, because of 
+course “regular” has a particular meaning here,  
+
+510
+00:38:23,280 --> 00:38:25,500
+that isn’t the regular meaning of the word
+
+511
+00:38:26,160 --> 00:38:30,780
+A regular curve is one where 
+the velocity is never 0
+
+512
+00:38:30,780 --> 00:38:33,240
+In other words, it never stands perfectly still
+
+513
+00:38:33,240 --> 00:38:38,820
+In fact, if we let this happen, a lot of our math 
+we’ve been talking about breaks down completely
+
+514
+00:38:39,540 --> 00:38:43,080
+Both getting the tangent direction, 
+and calculating the curvature,  
+
+515
+00:38:43,080 --> 00:38:46,320
+divides by 0 if there is a point with 0 speed
+
+516
+00:38:47,400 --> 00:38:52,200
+It’s relatively hard to create a curve with 
+this pathological behavior, but, not impossible
+
+517
+00:38:52,200 --> 00:38:54,960
+For example, take this bézier curve
+
+518
+00:38:55,920 --> 00:39:01,380
+If we place the tangent points at this exact 
+location, we’ve created a point with 0 speed
+
+519
+00:39:02,280 --> 00:39:06,780
+The curve is fully continuous, but 
+watch what happens to the tangent
+
+520
+00:39:08,760 --> 00:39:14,820
+It instantaneously flips, which 
+means it has a tangent discontinuity
+
+521
+00:39:16,380 --> 00:39:20,400
+This is called a cusp, and it’s one 
+of those rare exceptions where the  
+
+522
+00:39:20,400 --> 00:39:25,860
+curve is C∞ but only G⁰ continuous, at this point
+
+523
+00:39:25,860 --> 00:39:29,040
+We’ve only been talking 
+about Bézier splines so far
+
+524
+00:39:29,040 --> 00:39:33,540
+but now that we’re equipped with this 
+extremely powerful tool to analyze continuity
+
+525
+00:39:33,540 --> 00:39:37,860
+I think it’s time to visit the other 
+splines in the extended universe
+
+526
+00:39:41,340 --> 00:39:46,260
+While the bézier curve is useful, its 
+points are pretty, strange, are they not?
+
+527
+00:39:47,340 --> 00:39:51,360
+They don’t really refer to anything 
+specific, except the start and the end point
+
+528
+00:39:52,380 --> 00:39:56,460
+What if, we can come up with another type 
+of spline, that makes more physical sense?
+
+529
+00:39:57,180 --> 00:40:01,500
+What if instead of supplying 4 points, 
+we set the start and end point, as usual
+
+530
+00:40:01,500 --> 00:40:05,040
+but then, we also set the start and end velocities
+
+531
+00:40:06,540 --> 00:40:10,200
+Another way of looking at it - we’re 
+supplying the boundary in position and  
+
+532
+00:40:10,200 --> 00:40:13,740
+the boundary in velocity, and then 
+solving for the connection between
+
+533
+00:40:14,520 --> 00:40:19,500
+This could be really useful when 
+simulating physical objects,  
+
+534
+00:40:19,500 --> 00:40:22,320
+or even when interpolating 
+movement data across a network
+
+535
+00:40:22,320 --> 00:40:26,760
+This means we’ll have a spline that 
+automatically satisfies these constraints
+
+536
+00:40:27,660 --> 00:40:31,920
+It effectively auto-calculates the 
+acceleration and jolt, to make this curve
+
+537
+00:40:32,700 --> 00:40:35,340
+Coming up with this spline is 
+actually pretty straightforward!
+
+538
+00:40:36,060 --> 00:40:39,060
+As with any other math problem, 
+let’s list our known values,  
+
+539
+00:40:39,060 --> 00:40:40,980
+and our constraints, and solve from there
+
+540
+00:40:41,940 --> 00:40:44,460
+The start of the curve should be at P₀
+
+541
+00:40:44,460 --> 00:40:47,160
+The end of the curve should be at P₁
+
+542
+00:40:47,820 --> 00:40:50,340
+The velocity at the start should be v₀
+
+543
+00:40:50,340 --> 00:40:52,980
+The velocity at the end should be v₁
+
+544
+00:40:53,880 --> 00:40:57,240
+4 equations means 4 unknown 
+variables to solve for,  
+
+545
+00:40:57,240 --> 00:41:01,800
+which means we can use a cubic 
+polynomial, solving for a, b, c and d
+
+546
+00:41:02,460 --> 00:41:06,540
+For example, one of them we can figure 
+out immediately just by looking at it
+
+547
+00:41:06,540 --> 00:41:10,380
+If the equation should give us P₀ when t = 0,  
+
+548
+00:41:10,380 --> 00:41:16,860
+then a, b and c are all multiplied 
+by 0, this means that d has to be P₀
+
+549
+00:41:16,860 --> 00:41:22,560
+The same goes for the derivative 
+when t = 0, c has to be v₀
+
+550
+00:41:22,560 --> 00:41:23,640
+And so on!
+
+551
+00:41:23,640 --> 00:41:26,640
+I’ll spare you all the intermediate steps,
+
+552
+00:41:26,640 --> 00:41:30,420
+here’s what we end up with, 
+the matrix form of this spline
+
+553
+00:41:31,920 --> 00:41:34,140
+Now you might see the power of the matrix form
+
+554
+00:41:34,140 --> 00:41:37,080
+We now have the exact same setup where,  
+
+555
+00:41:37,080 --> 00:41:41,160
+we have a powers of t matrix on the 
+left, and a point matrix on the right
+
+556
+00:41:41,160 --> 00:41:43,500
+and then the characteristic matrix in the middle,  
+
+557
+00:41:43,500 --> 00:41:46,320
+giving us a kind of unique 
+fingerprint for this spline
+
+558
+00:41:47,820 --> 00:41:52,020
+Just like before, multiplying the 
+t-matrix by the characteristic matrix,  
+
+559
+00:41:52,020 --> 00:41:54,780
+gives us the basis function for each control point
+
+560
+00:41:56,340 --> 00:41:58,440
+This is what our new spline segment looks like!
+
+561
+00:42:00,300 --> 00:42:05,400
+The cool thing about this one is that 
+there’s no more arbitrary tangent points
+
+562
+00:42:05,400 --> 00:42:08,460
+it’s a spline that guarantees 
+being at a specific place,  
+
+563
+00:42:08,460 --> 00:42:11,280
+with a certain velocity, at every control point,
+
+564
+00:42:11,280 --> 00:42:14,460
+giving us a lot of control over 
+the animation across the spline
+
+565
+00:42:14,460 --> 00:42:17,940
+If we analyze the first derivative, the velocity,  
+
+566
+00:42:17,940 --> 00:42:22,680
+you can see it matches at every point along 
+this spline, and it’s fully continuous
+
+567
+00:42:24,900 --> 00:42:29,460
+Though you might’ve noticed that the velocity 
+itself looks like it changes pretty harshly
+
+568
+00:42:29,460 --> 00:42:33,660
+so, let’s look at the rate of change 
+of the rate of change - acceleration
+
+569
+00:42:35,100 --> 00:42:38,280
+Here, you can see that we have 
+our first proper discontinuity
+
+570
+00:42:38,280 --> 00:42:42,120
+There’s an instantaneous change 
+of acceleration at each join
+
+571
+00:42:42,120 --> 00:42:47,400
+In other words, while this spline doesn’t meet 
+the criteria for C² continuity, it is always C¹
+
+572
+00:42:49,260 --> 00:42:53,760
+This type of spline where you supply explicit 
+velocities at each point, actually has a name!
+
+573
+00:42:53,760 --> 00:42:56,100
+This is called a Hermite spline.
+
+574
+00:42:56,940 --> 00:43:00,480
+Or, I mean, if you’re French you’re 
+probably dying inside right now
+
+575
+00:43:00,480 --> 00:43:03,480
+technically I think it’s supposed to be 
+pronounced [bad french voice] Hermite
+
+576
+00:43:03,480 --> 00:43:06,780
+but nobody says it like that 
+okay so cut me some slack
+
+577
+00:43:06,780 --> 00:43:10,980
+Anyway, as you can see, the hermite 
+spline has explicit derivatives
+
+578
+00:43:10,980 --> 00:43:15,000
+And since both sides of each curve 
+join share the same velocity,  
+
+579
+00:43:15,000 --> 00:43:17,580
+it is also by necessity C¹ continuous
+
+580
+00:43:18,180 --> 00:43:23,400
+It’s also worth noting - many hermite splines 
+out there allow for two velocities per join
+
+581
+00:43:23,400 --> 00:43:26,760
+one for the incoming curve, 
+and one for the outgoing curve,  
+
+582
+00:43:26,760 --> 00:43:29,760
+allowing you to make C⁰ joins as well if you like
+
+583
+00:43:29,760 --> 00:43:33,660
+It’s also interpolating, it’s passing 
+through every point and every velocity.
+
+584
+00:43:35,340 --> 00:43:39,660
+Now, the hermite spline is actually very 
+closely related to the bézier spline
+
+585
+00:43:39,660 --> 00:43:42,420
+Converting between the two is trivially easy
+
+586
+00:43:43,260 --> 00:43:49,920
+If you divide each velocity by three, and add 
+its origin, you get the bezier tangent point
+
+587
+00:43:49,920 --> 00:43:53,760
+Flip that to the other side, and you now have 
+the bézier control point for the other side
+
+588
+00:43:54,600 --> 00:44:00,360
+This creates the exact same curve as the hermite 
+spline, but defined using béziers instead
+
+589
+00:44:01,260 --> 00:44:04,440
+This also tells us that the bézier tangent points,  
+
+590
+00:44:04,440 --> 00:44:07,920
+correspond to exactly a third 
+of the velocity at the join
+
+591
+00:44:10,020 --> 00:44:13,200
+Next up is a spline we’ve been 
+neglecting this whole time,  
+
+592
+00:44:13,200 --> 00:44:16,140
+which might be the most popular one out there
+
+593
+00:44:16,140 --> 00:44:18,960
+People just rarely call it a spline
+
+594
+00:44:18,960 --> 00:44:20,400
+The linear spline!
+
+595
+00:44:20,400 --> 00:44:23,400
+Simply, drawing straight lines between each point
+
+596
+00:44:23,400 --> 00:44:28,740
+And we might scoff at this shitty little basic 
+spline but it actually has a few superpowers
+
+597
+00:44:29,880 --> 00:44:32,280
+First, it’s passing through every control point!
+
+598
+00:44:32,280 --> 00:44:35,460
+No unnecessary bells and whistles, 
+just straight to the point
+
+599
+00:44:35,460 --> 00:44:37,020
+(no pun intended)
+
+600
+00:44:37,740 --> 00:44:41,880
+Second, it’s one of the few splines where 
+arc-length parameterization is easy!
+
+601
+00:44:42,900 --> 00:44:46,980
+Arc length parameterization is when you want 
+to interpolate a curve with a constant speed
+
+602
+00:44:46,980 --> 00:44:51,180
+which is actually very complicated 
+for almost all splines out there
+
+603
+00:44:52,500 --> 00:44:57,060
+Third, it’s very cheap to evaluate! 
+Here’s the formula, it’s just a lerp
+
+604
+00:44:58,680 --> 00:45:02,340
+But, unfortunately, it’s only ever C⁰ continuous
+
+605
+00:45:03,180 --> 00:45:09,120
+This property of passing through every 
+point you supply is very useful though
+
+606
+00:45:09,120 --> 00:45:12,600
+so we might ask, is it possible 
+to make a smoother spline,  
+
+607
+00:45:12,600 --> 00:45:16,200
+that will pass through them all, 
+without having to specify derivatives?
+
+608
+00:45:17,880 --> 00:45:21,420
+One method, is to use a similar 
+strategy as the hermite spline
+
+609
+00:45:21,420 --> 00:45:24,480
+but instead of supplying the velocities ourselves,  
+
+610
+00:45:24,480 --> 00:45:27,900
+what if we calculate them 
+based on neighboring points?
+
+611
+00:45:27,900 --> 00:45:32,760
+We simply draw a vector between the neighboring 
+points, and use that as our velocity
+
+612
+00:45:33,360 --> 00:45:35,580
+And we repeat this process for every point
+
+613
+00:45:35,580 --> 00:45:40,260
+Look at the neighbors, form a vector, 
+use that as our velocity, and so on.
+
+614
+00:45:45,120 --> 00:45:47,640
+This is the curve we get
+
+615
+00:45:50,160 --> 00:45:53,700
+Now, it’s not, perfect, there are a few problems
+
+616
+00:45:54,360 --> 00:45:57,780
+First, it doesn’t actually 
+pass through the endpoints,  
+
+617
+00:45:57,780 --> 00:46:02,250
+because they’re missing one of their 
+neighbors to calculate a velocity from :(
+
+618
+00:46:02,250 --> 00:46:05,040
+But, we can sort of, pretend 
+we have an extra point,  
+
+619
+00:46:05,040 --> 00:46:07,920
+that’s just the second adjacent point mirrored
+
+620
+00:46:08,520 --> 00:46:10,920
+This lets us extend the curve to the endpoints
+
+621
+00:46:11,820 --> 00:46:13,500
+And we do the same for the last point
+
+622
+00:46:13,500 --> 00:46:17,100
+mirror the second last point around the 
+last one, to create this, ghost point
+
+623
+00:46:17,100 --> 00:46:21,720
+The second thing we might 
+notice, is that the shape is,  
+
+624
+00:46:21,720 --> 00:46:27,900
+kinda weird isn’t it? No offense to this 
+spline of course but it’s rather, lumpy
+
+625
+00:46:28,500 --> 00:46:31,440
+For example, this part right here is very flat
+
+626
+00:46:32,880 --> 00:46:36,540
+And this part, has a pretty 
+sharp turn around flat sections
+
+627
+00:46:38,940 --> 00:46:42,000
+A good tool for analyzing 
+this is the curvature comb
+
+628
+00:46:42,000 --> 00:46:46,920
+We can now clearly see the radical 
+change in curvature across this spline
+
+629
+00:46:47,640 --> 00:46:50,280
+this sharp turn now has a very clear bump
+
+630
+00:46:50,280 --> 00:46:56,760
+and this flat section very clearly has curvature 
+drop to almost 0, meaning it’s linear, or, flat
+
+631
+00:46:57,900 --> 00:47:02,640
+Maybe it’s a good idea to find some way to 
+mitigate these sharp turns and flat sections
+
+632
+00:47:03,540 --> 00:47:06,900
+What if we apply a scale 
+factor to all these velocities?
+
+633
+00:47:07,440 --> 00:47:09,720
+Just, scale them all down by some value
+
+634
+00:47:10,980 --> 00:47:13,920
+You can see the curve becomes much more relaxed
+
+635
+00:47:13,920 --> 00:47:17,160
+And as we continue, it actually 
+approaches the linear spline
+
+636
+00:47:19,020 --> 00:47:23,400
+So with this scale parameter, we have a lot 
+more control over the sharpness of the curve
+
+637
+00:47:24,600 --> 00:47:27,840
+Bringing back the curvature comb, 
+you can see that with a low scale,  
+
+638
+00:47:27,840 --> 00:47:32,100
+the curvature is extreme at the joins, and 
+quickly flattens along most of the segments
+
+639
+00:47:32,100 --> 00:47:36,180
+Increase the scale, and the 
+curve becomes much more relaxed,  
+
+640
+00:47:36,180 --> 00:47:39,180
+before getting a little 
+bumpy again at a scale of 1
+
+641
+00:47:42,480 --> 00:47:45,420
+This type of spline with automatic tangents,  
+
+642
+00:47:45,420 --> 00:47:49,920
+a scale parameter, and interpolating 
+all points, is called a cardinal spline
+
+643
+00:47:51,420 --> 00:47:53,100
+Here’s what its matrix form looks like!
+
+644
+00:47:54,780 --> 00:47:58,320
+As a side note, when you read 
+up on cardinal splines online,  
+
+645
+00:47:58,860 --> 00:48:00,720
+usually they call this scale “tension”
+
+646
+00:48:00,720 --> 00:48:04,380
+but there’s no consensus on 
+how to apply this tension value
+
+647
+00:48:04,380 --> 00:48:07,380
+I’ve found three different 
+methods across the internet
+
+648
+00:48:07,380 --> 00:48:09,900
+so I’m just giving up, and calling it scale
+
+649
+00:48:09,900 --> 00:48:13,560
+because I think this is the most computationally 
+efficient way to define it anyway
+
+650
+00:48:15,060 --> 00:48:20,100
+The cardinal spline however, is usually 
+overshadowed by a closely related spline
+
+651
+00:48:21,120 --> 00:48:28,260
+When we set the scale to exactly ½, the 
+spline looks, unusually relaxed, doesn’t it?
+
+652
+00:48:29,160 --> 00:48:34,380
+There’s no super flat sections, and no super 
+sharp turns where it doesn’t feel justified
+
+653
+00:48:35,580 --> 00:48:39,180
+It’s a very, comfortable spline, 
+where you pass in some points,  
+
+654
+00:48:39,180 --> 00:48:42,240
+and it “just” smoothly passes 
+through without too much effort
+
+655
+00:48:43,500 --> 00:48:47,100
+This is one of the most popular splines 
+in game development for this reason,
+
+656
+00:48:47,100 --> 00:48:49,740
+and it’s called the catmull-rom spline
+
+657
+00:48:50,880 --> 00:48:55,560
+It passes through every point (except the 
+endpoints that kind of need special handling)
+
+658
+00:48:56,460 --> 00:49:00,720
+As for continuity, the curvature 
+comb tells us it is G¹ continuous
+
+659
+00:49:02,700 --> 00:49:04,680
+Let’s also look at the parametric continuity
+
+660
+00:49:05,280 --> 00:49:07,560
+The first derivative is fully continuous
+
+661
+00:49:07,560 --> 00:49:13,800
+The second derivative however, is not connected, 
+you can see there’s discontinuities here,
+
+662
+00:49:14,700 --> 00:49:18,600
+so in the end, the catmull-rom 
+spline is C¹ continuous
+
+663
+00:49:19,320 --> 00:49:22,740
+And there’s no need to specify 
+tangents, it “just works”
+
+664
+00:49:24,840 --> 00:49:27,900
+Of course, we can work out the 
+matrix form of the catmull-rom  
+
+665
+00:49:27,900 --> 00:49:31,620
+as well, letting us see its unique 
+fingerprint, and its basis functions
+
+666
+00:49:33,600 --> 00:49:36,720
+Let’s actually take a closer 
+look at these basis functions,  
+
+667
+00:49:36,720 --> 00:49:40,260
+because they very clearly illustrate 
+their relationship with these points
+
+668
+00:49:41,400 --> 00:49:45,240
+Remember - the basis functions 
+say how much every control point  
+
+669
+00:49:45,240 --> 00:49:47,580
+should influence a given point in the curve
+
+670
+00:49:48,180 --> 00:49:51,960
+and so if we arrange them a little 
+differently, it’s now easier to tell  
+
+671
+00:49:51,960 --> 00:49:56,400
+how this represents the influence of a 
+single point, across 4 curve segments
+
+672
+00:49:57,780 --> 00:50:00,900
+To highlight this, let’s focus 
+on one point, and its influence
+
+673
+00:50:02,520 --> 00:50:06,660
+The white section is where the point is 
+pulling on the curve with a positive influence
+
+674
+00:50:07,260 --> 00:50:11,880
+while the red section is getting pushed away 
+by the point, as it has a negative influence
+
+675
+00:50:16,020 --> 00:50:18,420
+And this is how every control point behaves
+
+676
+00:50:19,500 --> 00:50:21,780
+Every point has its own wave like this,  
+
+677
+00:50:21,780 --> 00:50:24,660
+telling us how much it should 
+influence each part of the spline
+
+678
+00:50:30,480 --> 00:50:32,220
+This is what the full spectrum looks like
+
+679
+00:50:34,320 --> 00:50:40,260
+These influences then work together, 
+to carry a point across the spline
+
+680
+00:50:40,860 --> 00:50:45,060
+Each point has a peak, where it 
+has 100% influence, guaranteeing  
+
+681
+00:50:45,060 --> 00:50:48,420
+that the point on the curve will be at 
+the same location as the control point
+
+682
+00:50:48,420 --> 00:50:52,080
+and then its influence will drop 
+off, letting the next point take over
+
+683
+00:50:55,620 --> 00:51:00,360
+A really neat thing is that we can analyze these 
+basis functions on their continuity directly
+
+684
+00:51:02,400 --> 00:51:05,400
+We can tell that this one is 
+continuous, because all curves meet,  
+
+685
+00:51:05,400 --> 00:51:10,500
+and the ends are meeting with the x 
+axis line, and so C⁰ continuity is met
+
+686
+00:51:11,580 --> 00:51:14,160
+And what about the derivative 
+of these basis functions?
+
+687
+00:51:16,920 --> 00:51:18,480
+They are also continuous
+
+688
+00:51:18,480 --> 00:51:21,240
+so we’re at least C¹, which we would expect
+
+689
+00:51:22,560 --> 00:51:25,680
+The second derivative, 
+however, has discontinuities,  
+
+690
+00:51:25,680 --> 00:51:30,240
+you can see how there are gaps in the 
+graph, so we’re still not C² continuous
+
+691
+00:51:31,800 --> 00:51:36,120
+And isn’t this a little frustrating? 
+we’ve explored all these new splines,  
+
+692
+00:51:36,120 --> 00:51:38,940
+and yet we’re still stuck in C¹ continuity land
+
+693
+00:51:39,720 --> 00:51:44,460
+Is there really no way to make a C², 
+an acceleration continuous, spline?
+
+694
+00:51:46,260 --> 00:51:50,580
+Well, the best way to test this, is to 
+try doing it yourself. In other words,  
+
+695
+00:51:50,580 --> 00:51:52,320
+you know, fuck around and find out
+
+696
+00:51:53,100 --> 00:51:57,780
+Remember, the fingerprint of a cubic spline, 
+is the characteristic matrix in the middle.
+
+697
+00:51:57,780 --> 00:52:04,620
+The challenge now is to find the 16 unknown 
+values, to make a C² continuous spline.
+
+698
+00:52:05,580 --> 00:52:10,260
+This means, we need 16 equations to solve 
+this, and let’s see if we can make it work!
+
+699
+00:52:11,400 --> 00:52:16,020
+The end of the first basis function 
+has to be C² continuous with the x axis
+
+700
+00:52:16,020 --> 00:52:17,220
+That’s 3 equations
+
+701
+00:52:18,300 --> 00:52:21,840
+The join between the first two 
+basis functions, also has to be C²
+
+702
+00:52:21,840 --> 00:52:23,460
+So 6 equations
+
+703
+00:52:24,660 --> 00:52:27,420
+We want a C² join between 
+the middle basis functions
+
+704
+00:52:27,420 --> 00:52:28,320
+Nine equations
+
+705
+00:52:29,760 --> 00:52:32,280
+C² join between last two basis functions
+
+706
+00:52:32,280 --> 00:52:33,360
+12 equations
+
+707
+00:52:34,440 --> 00:52:38,700
+The start of the last basis function 
+has to be C² with the x axis
+
+708
+00:52:38,700 --> 00:52:39,960
+15 equations
+
+709
+00:52:41,340 --> 00:52:44,280
+We, did it, right? kinda? sort of?
+
+710
+00:52:44,280 --> 00:52:48,000
+We’ve actually fit all of 
+our constraints in, right?
+
+711
+00:52:48,780 --> 00:52:53,760
+But, we need one more constraint, right 
+now we have one degree of freedom.
+
+712
+00:52:54,540 --> 00:52:57,660
+Luckily, we are actually missing one more thing
+
+713
+00:52:57,660 --> 00:53:03,000
+The basis functions all have to add up to 1, 
+because they are used as a convex combination
+
+714
+00:53:04,080 --> 00:53:07,980
+16 equations, 16 unknowns, this is now solvable!
+
+715
+00:53:08,820 --> 00:53:13,020
+I’ll be skipping the steps involved in 
+solving this system of 16 equations,  
+
+716
+00:53:13,020 --> 00:53:14,940
+but, just trust me that it’s possible~
+
+717
+00:53:16,080 --> 00:53:19,320
+And so now, instead of the 
+catmull-rom basis functions,  
+
+718
+00:53:19,320 --> 00:53:21,960
+this is what our new basis functions look like!
+
+719
+00:53:24,840 --> 00:53:29,220
+This, looks, really really 
+smooth, I think we’ve done it
+
+720
+00:53:29,220 --> 00:53:32,100
+This should be a cubic C² continuous spline,  
+
+721
+00:53:32,100 --> 00:53:35,820
+where these are the values we end 
+up with in our characteristic matrix
+
+722
+00:53:37,200 --> 00:53:41,040
+And now, the big question - 
+what does this spline look like?
+
+723
+00:53:41,820 --> 00:53:43,800
+Well, it looks like this
+
+724
+00:53:45,720 --> 00:53:48,180
+This might be, a little surprising
+
+725
+00:53:48,180 --> 00:53:53,160
+This is the first time the curves 
+don’t actually meet at control points
+
+726
+00:53:53,160 --> 00:53:57,480
+The curves and their joins are 
+completely outside of the control points.
+
+727
+00:53:59,220 --> 00:54:05,880
+But what about continuity? This was, after all, 
+our goal (to make a ridiculously smooth spline)
+
+728
+00:54:07,380 --> 00:54:11,040
+If we look at the curvature 
+comb, it seems G² continuous!
+
+729
+00:54:12,180 --> 00:54:16,200
+The comb is aligned and connected across 
+the joins, no matter what shape we use,  
+
+730
+00:54:16,200 --> 00:54:19,020
+so our geometric continuity is looking really good
+
+731
+00:54:20,520 --> 00:54:26,100
+We can also tell it isn’t G³ continuous, since 
+the curvature comb itself isn’t tangent continuous
+
+732
+00:54:27,720 --> 00:54:33,480
+Remember, when we tried to force the bézier spline 
+to be more continuous, we lost local control?
+
+733
+00:54:33,480 --> 00:54:38,280
+Moving any one control point, affected the 
+rest of the spline under those constraints.
+
+734
+00:54:38,280 --> 00:54:41,640
+But for this spline? We’ve still got local control  
+
+735
+00:54:41,640 --> 00:54:45,480
+over all the control points, 
+and, keeping continuity intact!
+
+736
+00:54:46,980 --> 00:54:50,400
+So, the geometric continuity of this spline, is G²
+
+737
+00:54:51,480 --> 00:54:53,340
+How about parametric continuity?
+
+738
+00:54:53,880 --> 00:54:59,280
+Well, we know it’s at least C⁰, but did we 
+manage to make it C² continuous as well?
+
+739
+00:54:59,940 --> 00:55:02,100
+Let’s analyze it using animation this time!
+
+740
+00:55:02,820 --> 00:55:05,760
+If we notice any sudden 
+jumps, we have a discontinuity
+
+741
+00:55:06,600 --> 00:55:11,160
+The first derivative, in other words, the 
+velocity vectors, are all looking very smooth!
+
+742
+00:55:11,160 --> 00:55:14,280
+There are no sudden jumps as they pass the joins
+
+743
+00:55:14,280 --> 00:55:17,580
+So, this spline is at least C¹ continuous
+
+744
+00:55:18,360 --> 00:55:19,920
+Next up is acceleration!
+
+745
+00:55:20,760 --> 00:55:25,080
+I like to think of the acceleration vectors 
+as “pulling” on the velocity vectors
+
+746
+00:55:25,080 --> 00:55:28,800
+and so I will draw them at the 
+tip of each velocity vector
+
+747
+00:55:28,800 --> 00:55:30,840
+And let’s see if we notice any sudden jumps.
+
+748
+00:55:32,580 --> 00:55:37,440
+Again, the arrows never make 
+any instantaneous change!
+
+749
+00:55:37,440 --> 00:55:42,660
+This means we succeeded - we 
+finally have a C² continuous spline!  
+
+750
+00:55:44,040 --> 00:55:45,900
+possible it’s C³ continuous too?
+
+751
+00:55:45,900 --> 00:55:51,540
+Well, that would be impossible, since the 
+geometric continuity would have to be at least G³
+
+752
+00:55:52,920 --> 00:55:56,100
+but if you’re curious, this is 
+what the jolt vectors look like,  
+
+753
+00:55:56,100 --> 00:55:57,960
+pulling on the acceleration vectors
+
+754
+00:55:59,640 --> 00:56:03,120
+As expected, this is where we have our first  
+
+755
+00:56:03,120 --> 00:56:06,960
+discontinuity - the jolt vectors 
+jump as we pass across the joins
+
+756
+00:56:11,640 --> 00:56:16,680
+So this soft little spline, while 
+it’s not interpolating, like, at all
+
+757
+00:56:16,680 --> 00:56:19,200
+it is actually C² continuous
+
+758
+00:56:19,200 --> 00:56:24,300
+The reason this is possible is because 
+we sacrificed the interpolating property,  
+
+759
+00:56:24,300 --> 00:56:26,880
+in favor of acceleration continuity
+
+760
+00:56:27,900 --> 00:56:30,000
+Of course, this spline has a name!
+
+761
+00:56:30,000 --> 00:56:33,360
+it’s called a B-spline, short for Basis Spline
+
+762
+00:56:34,860 --> 00:56:39,180
+Now that we’ve been looking at these 
+for a while, it’s time for a quiz
+
+763
+00:56:40,620 --> 00:56:42,180
+What spline is this?
+
+764
+00:56:44,640 --> 00:56:46,260
+It might be hard to tell
+
+765
+00:56:46,260 --> 00:56:51,240
+It requires an unreasonably, actually 
+impossibly keen eye to determine
+
+766
+00:56:52,080 --> 00:56:53,880
+But clearly it’s a bézier right?
+
+767
+00:56:53,880 --> 00:56:57,480
+You can practically see the control 
+points just by looking at it
+
+768
+00:56:57,480 --> 00:57:00,240
+or hm wait maybe it’s a hermite spline?
+
+769
+00:57:00,240 --> 00:57:02,340
+like you got the velocities and all
+
+770
+00:57:02,340 --> 00:57:04,980
+or I guess it could be a catmull-rom
+
+771
+00:57:04,980 --> 00:57:06,540
+passing through the points like that
+
+772
+00:57:07,560 --> 00:57:11,400
+no wait it’s obviously a B-spline, 
+look at how smooth this shape is!
+
+773
+00:57:12,540 --> 00:57:14,640
+or, what if it’s, a trajectory!
+
+774
+00:57:14,640 --> 00:57:20,640
+with a starting point, initial velocity, 
+initial gravity, and a change of gravity!
+
+775
+00:57:20,640 --> 00:57:26,400
+It’s the path in space with a changing 
+gravitational pull, traversing for one second
+
+776
+00:57:26,400 --> 00:57:27,720
+That’s what this is
+
+777
+00:57:28,260 --> 00:57:31,020
+Look we can even do the 
+matrix form for trajectories!
+
+778
+00:57:31,020 --> 00:57:35,880
+which, personally I think is super cool in 
+and of itself, but, that’s a bit of a tangent
+
+779
+00:57:37,980 --> 00:57:41,100
+So, what’s happening here, trick question aside,  
+
+780
+00:57:41,100 --> 00:57:44,820
+is that, all of them can 
+generate this specific curve
+
+781
+00:57:44,820 --> 00:57:47,280
+Because all of these individual spline segments  
+
+782
+00:57:47,280 --> 00:57:49,560
+we’ve been talking about, 
+are actually very similar
+
+783
+00:57:50,460 --> 00:57:55,800
+First, they are all uniform! They presume 
+you want to interpolate in a 0 to 1 range
+
+784
+00:57:57,120 --> 00:58:01,500
+Second, they are all cubic 
+polynomials. They all fit this formula
+
+785
+00:58:03,000 --> 00:58:08,220
+So, if they can generate the same curve, 
+what’s even the point of different splines?
+
+786
+00:58:09,300 --> 00:58:11,280
+So what I want you to keep in mind, is that,  
+
+787
+00:58:11,280 --> 00:58:16,020
+curves themselves are not splines! 
+they are generated by splines
+
+788
+00:58:16,800 --> 00:58:21,960
+it’s all about how multiple curves, connect, 
+and how smoothly they are able to do so
+
+789
+00:58:23,700 --> 00:58:27,660
+What splines really describe, is 
+a transformation of control points
+
+790
+00:58:28,260 --> 00:58:32,520
+Given some control points, you 
+use a spline, to generate curves
+
+791
+00:58:34,260 --> 00:58:39,000
+If you swap out the spline, but keep the 
+control points, you get different curves
+
+792
+00:58:40,860 --> 00:58:45,000
+I want you to think of splines as curve 
+generators, that make certain promises  
+
+793
+00:58:45,000 --> 00:58:49,680
+about continuity in the curve joins, and 
+how it treats the input control points
+
+794
+00:58:50,400 --> 00:58:55,380
+So it’s not just about the end result, 
+but the process you used to get there
+
+795
+00:58:55,380 --> 00:58:59,160
+You know as they say, “it’s about 
+the journey, not the destination”
+
+796
+00:59:00,120 --> 00:59:03,000
+except it’s still a little bit 
+about the destination too, but,
+
+797
+00:59:03,000 --> 00:59:05,880
+you know what I mean I’m trying to 
+make some sort of circular compos-
+
+798
+00:59:05,880 --> 00:59:08,580
+To summarize the family of 
+splines we talked about today
+
+799
+00:59:08,580 --> 00:59:11,940
+The Bézier spline gives us 
+a huge amount of control
+
+800
+00:59:11,940 --> 00:59:17,520
+It lets us create sharp corners, in other 
+words, intentional tangent discontinuities
+
+801
+00:59:17,520 --> 00:59:22,620
+Which is very useful when defining shapes like 
+fonts or vector graphics, such as this heart
+
+802
+00:59:25,380 --> 00:59:28,440
+Hermite splines let us 
+define explicit derivatives,  
+
+803
+00:59:28,440 --> 00:59:32,280
+guaranteeing it will pass through 
+its points with specific velocities
+
+804
+00:59:33,240 --> 00:59:35,640
+This is the most common spline for animation,  
+
+805
+00:59:35,640 --> 00:59:39,600
+and its the basis for the animation 
+curve editor in Unity, the game engine
+
+806
+00:59:40,740 --> 00:59:44,040
+For example, let’s say we want 
+to animate a jumping square
+
+807
+00:59:44,700 --> 00:59:50,040
+We can model its vertical position over 
+time using a non-uniform 1D hermite spline
+
+808
+00:59:50,040 --> 00:59:54,900
+Remember, non-uniform means the time 
+interval between joins can vary,  
+
+809
+00:59:54,900 --> 00:59:59,340
+which is a little bit more complex than 
+the uniform hermite we talked about today
+
+810
+01:00:00,000 --> 01:00:01,980
+Anyhow, this lets us animate it!
+
+811
+01:00:02,700 --> 01:00:07,200
+We can use another spline to make it do a 
+little flip, by changing its angle over time
+
+812
+01:00:12,180 --> 01:00:15,240
+Let’s also animate its scale to 
+make it all squishy and goopy~
+
+813
+01:00:25,140 --> 01:00:29,580
+The Catmull-Rom is the easiest way 
+to “just” smooth a set of points
+
+814
+01:00:29,580 --> 01:00:33,660
+when you want it to automatically 
+calculate the velocity, which is very  
+
+815
+01:00:33,660 --> 01:00:37,980
+useful for path smoothing, where passing 
+through exact points can be important
+
+816
+01:00:39,840 --> 01:00:46,380
+The B-Spline guarantees C² continuity, and so 
+it’s the most popular spline in industrial design
+
+817
+01:00:46,380 --> 01:00:51,300
+as it allows you to design curvature sensitive 
+reflective surfaces without losing local control
+
+818
+01:00:51,300 --> 01:00:55,620
+In addition, some animations 
+are also acceleration sensitive
+
+819
+01:00:55,620 --> 01:00:57,660
+such as the movement of a camera,  
+
+820
+01:00:57,660 --> 01:01:01,920
+where instantaneous changes in 
+acceleration look pretty jarring
+
+821
+01:01:11,220 --> 01:01:16,800
+The linear spline is not very smooth, but 
+in some cases it either doesn’t matter,  
+
+822
+01:01:16,800 --> 01:01:20,640
+or, you have so many control points 
+that it appears smooth in context
+
+823
+01:01:21,420 --> 01:01:25,560
+For example, if you need to draw a curve 
+in a youtube video about about splines
+
+824
+01:01:25,560 --> 01:01:30,180
+the easiest and most practical solution 
+is to simply sample the curve densely  
+
+825
+01:01:30,180 --> 01:01:33,420
+enough so that it looks smooth, 
+when drawing it as a set of lines
+
+826
+01:01:35,940 --> 01:01:41,160
+Now, we’ve only really scratched 
+the surface of this enormous topic
+
+827
+01:01:41,160 --> 01:01:46,860
+In this video, we’ve mostly been talking about 
+a specific subset - uniform cubic splines
+
+828
+01:01:46,860 --> 01:01:48,960
+All of these have counterparts of higher degrees
+
+829
+01:01:50,100 --> 01:01:54,300
+All of them also have non-uniform variants, 
+like the non-uniform hermite spline we just  
+
+830
+01:01:54,300 --> 01:01:58,680
+used for the jumping box animation, where 
+you have full control over not only the  
+
+831
+01:01:58,680 --> 01:02:03,360
+position and velocity at the control points, 
+but also the time at which it should reach it
+
+832
+01:02:03,360 --> 01:02:07,920
+Or the non-uniform catmull-rom which has 
+some interesting geometric properties  
+
+833
+01:02:07,920 --> 01:02:11,460
+when you set the knot intervals based 
+on the distance between the points.
+
+834
+01:02:11,460 --> 01:02:15,840
+And while the uniform B-spline we looked 
+at earlier was useful in its own right,
+
+835
+01:02:15,840 --> 01:02:22,140
+if we allow changing the time or knot 
+values, we get the non-uniform B-spline
+
+836
+01:02:22,140 --> 01:02:25,440
+All the continuity promises of 
+the B-spline are still intact,  
+
+837
+01:02:25,440 --> 01:02:31,200
+but each curve in the spline will now use 
+unique basis functions, based on the knot values
+
+838
+01:02:31,200 --> 01:02:33,960
+This, in turn, affects the shape of the spline too
+
+839
+01:02:35,040 --> 01:02:39,600
+There’s an even more advanced variant, 
+called the non-uniform rational B-spline,  
+
+840
+01:02:39,600 --> 01:02:43,620
+that lets you control the priority, 
+or, weight, of each control point
+
+841
+01:02:43,620 --> 01:02:48,240
+making the curves gravitate toward 
+or away from specific control points
+
+842
+01:02:49,260 --> 01:02:51,300
+You might even have heard of this one before
+
+843
+01:02:52,260 --> 01:02:54,540
+it’s more commonly known by its short name
+
+844
+01:02:54,540 --> 01:02:55,260
+NURBS
+
+845
+01:02:56,340 --> 01:02:59,820
+And, remember the color gradient 
+in the beginning of the video?
+
+846
+01:02:59,820 --> 01:03:06,480
+Well, every color lives in the space of the RGB 
+cube, where the dimensions are red, green and blue
+
+847
+01:03:09,120 --> 01:03:14,040
+So every color key in a gradient, is a control 
+point of a linear spline, in color space
+
+848
+01:03:15,000 --> 01:03:17,940
+Then, if we want to use this 
+as a gradient map on an image,  
+
+849
+01:03:17,940 --> 01:03:24,060
+instead of using time as our input, we use the 
+brightness of its pixels to sample the gradient
+
+850
+01:03:24,060 --> 01:03:28,080
+The output is then in full 
+color, based on our color spline
+
+851
+01:03:28,860 --> 01:03:31,380
+If we then move the control 
+points, in other words,  
+
+852
+01:03:31,380 --> 01:03:35,700
+change the colors and time of our 
+keys, the output changes along with it
+
+853
+01:03:38,160 --> 01:03:42,240
+As you can see, splines show up in 
+many, perhaps, unexpected places
+
+854
+01:03:42,240 --> 01:03:46,140
+The whole field goes much deeper 
+than what we had time for today
+
+855
+01:03:46,140 --> 01:03:48,960
+but I hope you found this 
+little exploration of math  
+
+856
+01:03:48,960 --> 01:03:52,960
+noodles interesting - and thank 
+you all so much for watching ❤
+
+857
+01:03:54,000 --> 01:03:58,020
+I wanna give a huge shoutout to Jazz Mickle, for 
+the audio & music that she made for this video
+
+858
+01:03:58,020 --> 01:04:02,040
+I also wanna thank Thor and 
+Salad and Toast, our cats,  
+
+859
+01:04:02,040 --> 01:04:05,640
+that, did a good job interrupting 
+me recording the voiceover for this
+
+860
+01:04:05,640 --> 01:04:07,200
+This here is salad
+
+861
+01:04:07,200 --> 01:04:10,620
+He's currently chasing Thor 
+which he's not allowed to do
+
+862
+01:04:11,520 --> 01:04:12,660
+He's being a bad boy
+
+863
+01:04:13,680 --> 01:04:14,460
+yeah
+
+864
+01:04:16,200 --> 01:04:18,960
+And then finally, I wanna thank all of you! All of  
+
+865
+01:04:18,960 --> 01:04:22,020
+the patreon supporters that have 
+made this entire video possible
+
+866
+01:04:22,020 --> 01:04:24,060
+So thank you so much for supporting me.
+
+867
+01:04:25,140 --> 01:04:29,760
+I also wanna say that if you're not a supporter 
+on patreon, I think you should me! If you like the  
+
+868
+01:04:29,760 --> 01:04:37,800
+work that I do. Patreon is also the,, it's like 
+the only platform, that only takes 5% of the cut
+
+869
+01:04:37,800 --> 01:04:45,840
+most other platforms take like 30% or 50%, which 
+is absolutely ridiculous, and so patreon is like  
+
+870
+01:04:45,840 --> 01:04:51,120
+a really really good place to support work 
+in general, so I would really recommend that!
+
+871
+01:04:51,120 --> 01:04:58,560
+So, this video took, about a year to make. 
+A little bit over a year, I think, from,  
+
+872
+01:04:58,560 --> 01:05:01,980
+starting research, to releasing it on youtube
+
+873
+01:05:01,980 --> 01:05:07,140
+I think the scope of this video was 
+way too big. I kinda realized that,  
+
+874
+01:05:07,140 --> 01:05:12,000
+splines is a very big topic. Like there are so 
+many different avenues you can go, there's so  
+
+875
+01:05:12,000 --> 01:05:17,520
+many different things you can talk about, and, I 
+kept like adding more and more stuff to the video,  
+
+876
+01:05:17,520 --> 01:05:24,000
+and I always wanna go like into, in-depth about 
+every topic I talk about. And, it's impossible,  
+
+877
+01:05:24,000 --> 01:05:29,340
+for this. I can't go too in-depth about splines, 
+because then the video is gonna be like,  
+
+878
+01:05:29,340 --> 01:05:35,280
+12 hours long, if I wanna cover everything that 
+I researched. And so, I think going forward,  
+
+879
+01:05:35,280 --> 01:05:43,740
+I realized that, I should pick smaller topics! 
+Or, kinda plan from the beginning to make them  
+
+880
+01:05:43,740 --> 01:05:49,320
+in chunks, instead of planning for making a very 
+long video. The initial goal for this video was  
+
+881
+01:05:49,320 --> 01:05:55,380
+to make a video that starts with lerp, and ends 
+at NURBS, which, I guess I kind of did? Except  
+
+882
+01:05:55,380 --> 01:06:01,020
+I didn't go into detail, how NURBS work. Because 
+we didn't really talk about non-uniform splines.
+
+883
+01:06:01,020 --> 01:06:08,160
+This project was, incredibly big. I think I got 
+like 3-4 months of work done, and then I burnt out  
+
+884
+01:06:08,160 --> 01:06:15,120
+completely, and, I couldn't work on it. I just 
+couldn't. I started shutting down. I couldn't,  
+
+885
+01:06:15,120 --> 01:06:21,900
+like, focus a single moment on, working on 
+this, for several months. Which was really  
+
+886
+01:06:21,900 --> 01:06:26,640
+really frustrating, because, I'm someone who 
+really like, gets a lot of value out of being  
+
+887
+01:06:26,640 --> 01:06:32,340
+productive and getting things done. And so it 
+was, very hard to deal with, and I think I'm  
+
+888
+01:06:32,340 --> 01:06:36,900
+still recovering from it. I wish I'd picked 
+a smaller scope for this video, because now,  
+
+889
+01:06:37,860 --> 01:06:41,220
+even though I'm happy it's the length 
+it is, and it has a lot of information,  
+
+890
+01:06:42,540 --> 01:06:47,220
+at every corner of the video, I know that there 
+are things I'm leaving out that I really wanted to  
+
+891
+01:06:47,220 --> 01:06:53,820
+talk about. But I just couldn't make all of those 
+animations and all of those ideas. I couldn't just  
+
+892
+01:06:53,820 --> 01:07:01,380
+cram it all into this video, and so unfortunately, 
+it is "just" one hour long, and it only covers the  
+
+893
+01:07:01,380 --> 01:07:06,780
+most popular uniform splines. But, I mean, I've 
+done all of that research, I've implemented all of  
+
+894
+01:07:06,780 --> 01:07:12,360
+that in code, and so if I want to make a future 
+video about non-uniform splines, or NURBS, or,  
+
+895
+01:07:12,360 --> 01:07:17,400
+specific other types of splines, I can do that. 
+And so I have the option in the future at least
+
+896
+01:07:18,060 --> 01:07:22,740
+Okay, so, I wanted to do a bit 
+of a, prediction game, this time!  
+
+897
+01:07:23,520 --> 01:07:30,180
+As usual, youtube comments are the way they are, 
+and so I thought I'd, you know, now that we're at  
+
+898
+01:07:30,180 --> 01:07:34,800
+the tail end of the video, where, statistically, 
+none of you are here. Like you who are watching  
+
+899
+01:07:34,800 --> 01:07:40,740
+this, you are the exception. There's like a- 
+extremely- everybody's trailing off at this  
+
+900
+01:07:40,740 --> 01:07:47,340
+point. And so you are like 1% or something. 
+And so I'd like to share with you, a little  
+
+901
+01:07:47,340 --> 01:07:51,300
+bit of a thing we can see, if the chat (youtube 
+comments) is gonna get started talking about.
+
+902
+01:07:52,620 --> 01:07:53,520
+Here are my predictions
+
+903
+01:07:53,520 --> 01:07:56,400
+I predict that, someone is gonna correct me, or,  
+
+904
+01:07:56,400 --> 01:07:59,520
+incorrectly correct me, about 
+how I pronounced "osculating".
+
+905
+01:08:01,560 --> 01:08:07,440
+In the bézier video, I said [ossu-layding] 
+for the osculating circle, I mispronounced it.  
+
+906
+01:08:07,440 --> 01:08:13,800
+But people thought I said "oscillating", like, 
+the, O-S-C-I-L-L and so people kept correcting  
+
+907
+01:08:13,800 --> 01:08:18,960
+me about that, and it was a nightmare for like, 
+several days, I just had notifications about that  
+
+908
+01:08:18,960 --> 01:08:24,060
+forever and ever. And so I think now I'm gonna 
+get the opposite, now I pronounced it correctly,  
+
+909
+01:08:24,060 --> 01:08:27,779
+and now people are gonna incorrect me, in 
+the comments. And so that's gonna be fun!
+
+910
+01:08:27,779 --> 01:08:32,279
+I think someone is gonna be like "oh your 
+should reduce the matrix form of the trajectory,  
+
+911
+01:08:32,279 --> 01:08:35,999
+because you can simplify that diagonal 
+matrix". Someone is gonna do that
+
+912
+01:08:36,000 --> 01:08:40,859
+People are gonna think that my definition 
+of splines is either wrong, or, they're  
+
+913
+01:08:40,859 --> 01:08:45,479
+gonna complain that I never accurately defined 
+what a spline is. I think this might happen,  
+
+914
+01:08:45,479 --> 01:08:50,339
+I think a lot of people use the word 
+spline to mean different things, but,  
+
+915
+01:08:50,340 --> 01:08:52,740
+hopefully I made my case for my definition.
+
+916
+01:08:52,740 --> 01:08:59,340
+Someone is gonna say, "you forgot to mention that 
+NURBS can make circles", which, I didn't forget,  
+
+917
+01:08:59,340 --> 01:09:06,479
+I left it out, because I think it's an interesting 
+topic on its own, and so in the spirit of trying  
+
+918
+01:09:06,479 --> 01:09:11,459
+to make shorter videos, this is a perfect, 
+bitesize topic to talk about in a single video,  
+
+919
+01:09:11,460 --> 01:09:15,779
+and so I think I'm gonna talk about circular 
+arcs and splines in a video in the future.
+
+920
+01:09:15,779 --> 01:09:21,359
+And then there's a bunch of topics where, I 
+think people are gonna be like "you forgot  
+
+921
+01:09:21,359 --> 01:09:25,319
+to talk about [this]" because they wanna 
+like, flaunt their knowledge about splines.  
+
+922
+01:09:26,100 --> 01:09:31,620
+So I think we're gonna get people saying I forgot 
+to talk about natural splines, polar blossoming,  
+
+923
+01:09:31,620 --> 01:09:36,960
+the DeBoor construction of the B-spline, 
+the A-frame construction, knot insertion,  
+
+924
+01:09:36,960 --> 01:09:43,380
+degree elevation, knot multiplicity, the 
+β-spline, the kochanek-bartels spline (idk  
+
+925
+01:09:43,380 --> 01:09:47,939
+how to pronounce it, it's something like 
+that), spiro splines, biarcs, and lagrange  
+
+926
+01:09:47,939 --> 01:09:52,859
+interpolation, which, is not even a spline, but..
+I think those are the things that people are gonna  
+
+927
+01:09:52,859 --> 01:09:59,160
+think that I forgot to mention, but, I actually 
+just left them out, because I need to have,  
+
+928
+01:09:59,160 --> 01:10:05,160
+a life, and not continue burning out. Let's say 
+we're just saving all of those for a future video.
+
+929
+01:10:05,940 --> 01:10:13,020
+Oh yeah another thing I also left out was that, I 
+spent quite a lot of time trying to invent my own  
+
+930
+01:10:13,020 --> 01:10:19,440
+spline. I really wanted to end the video inventing 
+something new. And kind of, contribute to the  
+
+931
+01:10:19,440 --> 01:10:28,560
+field, I suppose. That ended up almost happening. 
+I did make a spline, but, it had a bad shape.  
+
+932
+01:10:29,160 --> 01:10:34,020
+It looked ugly. The point was that I wanted to 
+make a spline, that would pass through every  
+
+933
+01:10:34,020 --> 01:10:40,920
+point, kinda like the catmull-rom, but it would 
+do that with C² continuity. The tradeoff was that,  
+
+934
+01:10:40,920 --> 01:10:48,360
+I made it one degree higher, it was quartic 
+instead of cubic. And it, actually works? I  
+
+935
+01:10:48,360 --> 01:10:54,000
+managed to make it pass through points with 
+C² continuity, but, it was just a bad shape,  
+
+936
+01:10:54,000 --> 01:10:57,960
+it was like almost linear between the points, 
+and then it did a quick curve, and then it was  
+
+937
+01:10:57,960 --> 01:11:02,580
+linear again between the other points, and so, 
+it ended up not being a very useful spline,  
+
+938
+01:11:02,580 --> 01:11:07,080
+which, I was a little bit disappointed once I 
+finally solved it. And I could only work out  
+
+939
+01:11:07,080 --> 01:11:11,760
+the uniform variant, not the non-uniform 
+variant. And so that's not in the video.
+
+940
+01:11:12,960 --> 01:11:20,460
+One thing that I noticed when making this is that, 
+I feel like I struggle to kind of find my voice. I  
+
+941
+01:11:20,460 --> 01:11:27,180
+don't know what my cadence is supposed to be, or 
+how I should sound in a video essay. I do most of  
+
+942
+01:11:27,180 --> 01:11:36,180
+my work livestreaming, and so, there, I sound much 
+more natural than I do reading a script. I think  
+
+943
+01:11:36,180 --> 01:11:41,040
+I might be experimenting a little bit more with 
+that in the future, like changing the style of my  
+
+944
+01:11:42,360 --> 01:11:47,640
+presentations or youtube videos I guess. I always 
+feel like my personality is not shining through,  
+
+945
+01:11:48,300 --> 01:11:53,880
+when I make this type of video. Because the 
+script is so straight, I really think it's  
+
+946
+01:11:53,880 --> 01:12:00,660
+missing so much of, me. And so I might change it 
+up a little bit, or I'll just learn as I go along  
+
+947
+01:12:00,660 --> 01:12:06,600
+I guess. I just feel like my delivery is not, 
+interesting. I feel like it's very flat and,  
+
+948
+01:12:07,320 --> 01:12:13,500
+objective, and lacking personality. 
+But we'll see, hopefully it's fine!
+
+949
+01:12:13,500 --> 01:12:17,760
+Oh, I also wanted to mention, a lot of 
+the work that I've done making this video,  
+
+950
+01:12:17,760 --> 01:12:28,920
+I've been streaming it on twitch. I also do my 
+live lectures on youtube, and so if you wanna  
+
+951
+01:12:28,920 --> 01:12:33,780
+watch a series on shader programming, if you're 
+watching this live, there's gonna be a series  
+
+952
+01:12:33,780 --> 01:12:37,860
+on that next week, that I'm gonna stream 
+on youtube, so, be sure to check that out.
+
+953
+01:12:37,860 --> 01:12:42,900
+But otherwise, again, thank you so much for 
+watching this video. This was such a long journey.  
+
+954
+01:12:44,160 --> 01:12:51,420
+I'm, again, I have ideas for shorter video in the 
+future. I have, I think I'm gonna make a video  
+
+955
+01:12:51,420 --> 01:12:58,080
+about like a tiny topic, a topic like, "what 
+are radians?". That seems like a very bitesize  
+
+956
+01:12:58,080 --> 01:13:04,140
+topic that I can then accidentally blow up to 30 
+minutes, but 30 minutes is a lot more manageable  
+
+957
+01:13:04,140 --> 01:13:09,300
+than 1 hour, so, hopefully that's what's gonna 
+happen. Hopefully I'm not just gonna release one  
+
+958
+01:13:09,300 --> 01:13:13,740
+video per year, I think I'm gonna try and increase 
+that frequency a little bit more by picking  
+
+959
+01:13:13,740 --> 01:13:19,140
+smaller topics, but, again, thank you so much 
+for joining, and I will see you all next time!
+

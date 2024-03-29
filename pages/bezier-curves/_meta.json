@@ -1,0 +1,5 @@
+{
+  "linear-interpolation": "Linear Interpolation (Lerp)",
+  "quadratic-cubic-bezier": "Quadratic and Cubic Bézier Curves",
+  "higher-degree-bezier": "Higher-degree Bézier Curves"
+}

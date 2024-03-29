@@ -1,0 +1,21 @@
+import { Callout, Steps, Step } from "nextra-theme-docs";
+
+# Continuity
+
+Continuity is a fundamental concept in the world of splines, as it directly impacts the smoothness and overall appearance of the resulting curves. In this section, we'll dive deep into the different types of continuity and their implications for spline construction and behavior.
+
+<Callout type="info">
+Continuity is a measure of how smoothly a curve transitions from one segment to another at the joining points, known as knots.
+</Callout>
+
+There are two main types of continuity we'll explore:
+
+1. [Parametric Continuity](/continuity/parametric-continuity): This type of continuity is based on the parametric derivatives of the curve, such as position (C⁰), velocity (C¹), acceleration (C²), and jolt (C³).
+
+2. [Geometric Continuity](/continuity/geometric-continuity): This type of continuity is based on the geometric properties of the curve, such as tangent direction (G¹), curvature (G²), and rate of change of curvature (G³).
+
+Understanding these different levels of continuity is crucial when working with splines, as they directly impact the smoothness and fairness of the resulting curves. Higher levels of continuity generally result in smoother curves, but they also come with trade-offs in terms of local control and computational complexity.
+
+In the following subsections, we'll explore each type of continuity in detail, providing examples and discussing their implications for spline construction and manipulation. We'll also look at the relationship between continuity and local control, and how different spline types balance these competing factors.
+
+By the end of this section, you'll have a solid understanding of continuity and its role in creating smooth, visually appealing curves for various applications, from computer graphics and animation to industrial design and beyond.

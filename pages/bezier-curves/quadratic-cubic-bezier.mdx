@@ -1,0 +1,55 @@
+import { Callout, Steps, Step } from "nextra-theme-docs";
+
+# Quadratic and Cubic Bézier Curves
+
+Bézier curves are a fundamental building block in computer graphics and animation. They allow us to create smooth, flexible curves using a set of control points. In this section, we'll explore two common types of Bézier curves: quadratic and cubic.
+
+## Quadratic Bézier Curves
+
+A quadratic Bézier curve is defined by three control points: a start point, an end point, and a single control point that influences the curve's shape. To construct a quadratic Bézier curve, we can use the following steps:
+
+<Steps>
+### Step 1: Linear Interpolation
+
+Perform linear interpolation between the control points using the [lerp function](/bezier-curves/linear-interpolation). This gives us two intermediate points that lie on the lines connecting the control points.
+
+### Step 2: Connect Intermediate Points
+
+Connect the two intermediate points obtained from Step 1 with a straight line.
+
+### Step 3: Lerp on the New Line
+
+Apply the lerp function again on the new line created in Step 2. The resulting point traces out the quadratic Bézier curve as we vary the parameter $t$ from 0 to 1.
+</Steps>
+
+The beauty of this process is that we can create a smooth curve using only linear interpolation!
+
+## Cubic Bézier Curves
+
+Cubic Bézier curves are even more versatile than their quadratic counterparts. They are defined by four control points: a start point, an end point, and two control points that influence the curve's shape. The construction process is similar to that of quadratic Bézier curves, but with an additional step:
+
+<Steps>
+### Step 1: Linear Interpolation
+
+Perform linear interpolation between the four control points, giving us three intermediate lines.
+
+### Step 2: Lerp on the Intermediate Lines
+
+Apply the lerp function on the three intermediate lines obtained from Step 1. This gives us two new lines.
+
+### Step 3: Connect New Points
+
+Connect the two points obtained from Step 2 with a straight line.
+
+### Step 4: Final Lerp
+
+Apply the lerp function one last time on the line created in Step 3. The resulting point traces out the cubic Bézier curve as we vary the parameter $t$ from 0 to 1.
+</Steps>
+
+<Callout>
+Cubic Bézier curves are incredibly popular in computer graphics and design. They are used extensively in vector graphics tools like Adobe Illustrator and Inkscape, as well as in font rendering and user interface design.
+</Callout>
+
+The power of cubic Bézier curves lies in their flexibility. By adjusting the positions of the control points, we can create a wide variety of shapes and curves. However, with great power comes great responsibility! It's important to understand how the control points affect the curve's shape to achieve the desired result.
+
+In the next section, we'll explore [higher-degree Bézier curves](/bezier-curves/higher-degree-bezier) and their limitations, which will lead us to the concept of [Bézier splines](/bezier-splines).

@@ -1,0 +1,48 @@
+import { Callout, Steps, Step } from "nextra-theme-docs";
+
+# Bézier Curves
+
+Bézier curves are a fundamental building block in the world of computer graphics, animation, and design. Named after French engineer Pierre Bézier, these curves are widely used to create smooth, organic shapes and paths. In this section, we'll explore the basics of Bézier curves and their properties.
+
+## What are Bézier Curves?
+
+Bézier curves are parametric curves that use a set of control points to define their shape. The control points influence the curve's direction and curvature, allowing for the creation of a wide range of shapes. The most common types of Bézier curves are:
+
+- **Linear Bézier curves:** Defined by two control points, resulting in a straight line.
+- **Quadratic Bézier curves:** Defined by three control points, allowing for the creation of simple curved shapes.
+- **Cubic Bézier curves:** Defined by four control points, enabling the creation of more complex curved shapes.
+
+<Callout type="info">
+Bézier curves are widely used in vector graphics software like Adobe Illustrator and Inkscape, where they are the foundation for creating scalable, resolution-independent artwork.
+</Callout>
+
+## Properties of Bézier Curves
+
+Bézier curves have several important properties that make them valuable for various applications:
+
+1. **Interpolation:** Bézier curves always pass through their first and last control points, ensuring a smooth transition between connected curves.
+
+2. **Convex hull:** The curve is entirely contained within the convex hull of its control points. This property allows for intuitive control over the curve's shape.
+
+3. **Affine invariance:** Applying affine transformations (translation, rotation, scaling) to the control points results in the same transformation being applied to the curve itself.
+
+4. **Continuity:** Bézier curves are infinitely differentiable within their defined range, ensuring smooth transitions between curve segments.
+
+## Constructing Bézier Curves
+
+The construction of Bézier curves relies on a mathematical concept called linear interpolation, or "lerping." Lerping allows us to blend between two values (points, colors, etc.) based on a parameter $t$ that ranges from 0 to 1.
+
+<Steps>
+
+### Linear Bézier Curves
+[Linear Bézier curves](/bezier-curves/linear-interpolation) are the simplest form of Bézier curves, defined by two control points. They are essentially straight lines connecting the two points.
+
+### Quadratic and Cubic Bézier Curves
+[Quadratic and cubic Bézier curves](/bezier-curves/quadratic-cubic-bezier) are more complex and allow for the creation of curved shapes. They are constructed by recursively applying linear interpolation to the control points.
+
+### Higher-degree Bézier Curves
+[Higher-degree Bézier curves](/bezier-curves/higher-degree-bezier) are defined by more than four control points. While they offer more control over the curve's shape, they also come with limitations in terms of local control and computational efficiency.
+
+</Steps>
+
+By understanding the fundamentals of Bézier curves, you'll be well-equipped to explore more advanced topics like [Bézier splines](/bezier-splines) and their applications in various fields.

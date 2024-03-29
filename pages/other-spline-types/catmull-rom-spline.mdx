@@ -1,0 +1,67 @@
+import { Callout, Steps, Step } from "nextra-theme-docs";
+
+# Catmull-Rom Spline
+
+The Catmull-Rom spline is a popular choice for creating smooth paths that pass through a set of control points. It is widely used in game development and computer graphics due to its simplicity and visually pleasing results. 
+
+## Properties
+
+The Catmull-Rom spline has the following properties:
+
+- It is an interpolating spline, meaning it passes through all the control points except for the endpoints.
+- The spline is C¹ continuous, ensuring smooth transitions between curve segments.
+- It is a special case of the [Cardinal spline](/other-spline-types/cardinal-spline) with a tension value of 0.5.
+- The shape of the curve is determined by the position of the control points, without the need to specify additional tangent or derivative information.
+
+## Construction
+
+To construct a Catmull-Rom spline, follow these steps:
+
+<Steps>
+
+### Step 1: Define control points
+
+Provide a set of control points that the spline will pass through. The control points are typically represented as an array of positions in 2D or 3D space.
+
+### Step 2: Calculate tangents
+
+For each control point, calculate the tangent by taking the vector between its neighboring points and scaling it by 0.5. The tangent at point $P_i$ is given by:
+
+$\text{tangent}_i = 0.5 \cdot (P_{i+1} - P_{i-1})$
+
+### Step 3: Interpolate between control points
+
+Use the calculated tangents and the [Hermite spline](/other-spline-types/hermite-spline) formula to interpolate between each pair of control points. The Hermite spline guarantees C¹ continuity by using the tangents as the derivatives at the control points.
+
+</Steps>
+
+<Callout type="info">
+The Catmull-Rom spline automatically calculates the tangents based on the neighboring control points, making it easy to create smooth paths without manually specifying derivatives.
+</Callout>
+
+## Smoothness
+
+The Catmull-Rom spline provides a good balance between smoothness and local control. It is G¹ continuous, meaning the tangent direction is continuous across the curve segments. However, it is not G² continuous, as the curvature may have discontinuities at the control points.
+
+Despite not being as smooth as higher-order splines like the [B-spline](/other-spline-types/b-spline), the Catmull-Rom spline is often preferred for its simplicity and interpolating property, making it easier to control the shape of the curve.
+
+## Example
+
+Here's an example of a Catmull-Rom spline passing through a set of control points:
+
+```mermaid
+graph LR
+    A[P0] --> B[P1]
+    B --> C[P2]
+    C --> D[P3]
+    D --> E[P4]
+    
+    A --- B
+    B -.- C
+    C -.- D
+    D --- E
+```
+
+In this example, the solid lines represent the Catmull-Rom spline segments, while the dotted lines show the connections between the control points. The spline smoothly interpolates between the control points, creating a visually pleasing curve.
+
+By adjusting the positions of the control points, you can easily shape the Catmull-Rom spline to fit your desired path or curve.
